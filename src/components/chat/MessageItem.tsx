@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Message } from '@/types';
@@ -10,7 +11,6 @@ import { CodeBlock } from './CodeBlock';
 import { CopyButton } from './CopyButton';
 import { RegenerateButton } from './RegenerateButton';
 import { FilePreview } from './FilePreview';
-import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MessageItemProps {
@@ -35,8 +35,14 @@ export function MessageItem({ message, isLastAssistantMessage }: MessageItemProp
         {isUser ? (
           <Avatar name={user?.displayName || 'User'} size="md" />
         ) : (
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-            <Sparkles className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 overflow-hidden flex items-center justify-center shadow-xs">
+            <Image
+              src="/mascot.jpg"
+              alt="MarketMind AI Mascot"
+              width={36}
+              height={36}
+              className="object-contain mix-blend-multiply"
+            />
           </div>
         )}
       </div>
