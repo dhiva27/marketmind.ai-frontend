@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, Bot } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 
 interface CtaSectionProps {
   onOpenDemoModal?: () => void;
@@ -50,21 +51,20 @@ export function CtaSection({ onOpenDemoModal }: CtaSectionProps) {
             </div>
           </div>
 
-          {/* Right 3D AI Robot graphic */}
+          {/* Right 3D AI Robot Mascot Graphic */}
           <div className="relative z-10 flex items-center justify-center shrink-0">
             <motion.div
-              animate={{ y: [0, -4, 0] }}
+              animate={{ y: [0, -6, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-600 p-1 shadow-lg flex items-center justify-center"
+              className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-white/80 backdrop-blur-xs border border-purple-200 shadow-xl flex items-center justify-center overflow-hidden"
             >
-              <div className="w-full h-full rounded-xl bg-slate-950 flex flex-col items-center justify-center space-y-1 text-white">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center shadow-xs">
-                  <Bot className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-[9px] font-bold tracking-wider uppercase text-purple-400">
-                  MarketMind AI
-                </div>
-              </div>
+              <Image
+                src="/mascot.jpg"
+                alt="MarketMind AI Mascot"
+                width={160}
+                height={160}
+                className="object-contain mix-blend-multiply drop-shadow-sm"
+              />
             </motion.div>
           </div>
         </motion.div>

@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { TrendingUp, Sparkles, Shield, Bot } from 'lucide-react';
+import { TrendingUp, Sparkles, Shield } from 'lucide-react';
 
 export function AuthLeftPanel() {
   const features = [
@@ -75,45 +76,30 @@ export function AuthLeftPanel() {
       {/* Bottom Section: 3D Mascot & Footer */}
       <div className="relative pt-6 z-10 flex flex-col justify-end space-y-4">
         {/* Soft Background Circle Glow */}
-        <div className="absolute left-6 bottom-8 w-56 h-56 bg-purple-100/40 rounded-full blur-2xl pointer-events-none -z-10" />
+        <div className="absolute left-6 bottom-8 w-60 h-60 bg-purple-100/50 rounded-full blur-2xl pointer-events-none -z-10" />
 
         {/* Premium 3D AI Mascot */}
         <motion.div
           animate={{
             y: [0, -8, 0],
-            scale: [1, 1.01, 1],
+            scale: [1, 1.015, 1],
           }}
           transition={{
             duration: 4,
             repeat: Infinity,
             ease: 'easeInOut',
           }}
-          className="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto lg:mx-0 flex items-center justify-center"
+          className="relative w-52 h-52 sm:w-60 sm:h-60 mx-auto lg:mx-0 flex items-center justify-center"
         >
-          {/* Standing Circular Platform */}
-          <div className="absolute bottom-2 w-40 h-6 bg-gradient-to-r from-slate-200/50 via-purple-200/60 to-slate-200/50 rounded-full blur-xs" />
-
-          {/* 3D Mascot Card Graphic */}
-          <div className="relative w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-gradient-to-b from-white via-purple-50/60 to-purple-100/80 p-2 shadow-xl shadow-purple-500/10 border border-purple-200/50 flex flex-col items-center justify-center space-y-2">
-            {/* Robot Head with Purple Glowing Eyes */}
-            <div className="relative w-20 h-16 rounded-2xl bg-slate-950 border-2 border-purple-300/40 flex items-center justify-center shadow-lg">
-              {/* Purple Glowing Eyes */}
-              <div className="flex items-center space-x-4">
-                <div className="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
-                <div className="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
-              </div>
-              {/* Antenna */}
-              <div className="absolute -top-3 w-1 h-3 bg-purple-400 rounded-full">
-                <div className="absolute -top-1.5 -left-1 w-3 h-3 rounded-full bg-purple-500 shadow-[0_0_8px_#a855f7]" />
-              </div>
-            </div>
-
-            {/* Glossy White Body */}
-            <div className="w-24 h-14 rounded-b-3xl bg-gradient-to-b from-slate-100 to-white border border-slate-200 flex items-center justify-center shadow-inner">
-              <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
-                <Bot className="w-3.5 h-3.5 text-purple-600" />
-              </div>
-            </div>
+          <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-full overflow-hidden flex items-center justify-center">
+            <Image
+              src="/mascot.jpg"
+              alt="MarketMind AI Mascot"
+              width={240}
+              height={240}
+              className="object-contain mix-blend-multiply drop-shadow-md"
+              priority
+            />
           </div>
         </motion.div>
 
