@@ -51,7 +51,7 @@ export function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="py-16 md:py-24 bg-[#F8FAFC]">
+    <section id="pricing" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-10">
         {/* Header */}
         <div className="max-w-xl mx-auto space-y-2">

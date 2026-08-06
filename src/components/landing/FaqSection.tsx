@@ -31,7 +31,7 @@ export function FaqSection() {
   ];
 
   return (
-    <section id="faq" className="py-16 md:py-24 bg-[#F8FAFC]">
+    <section id="faq" className="py-16 md:py-24 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
         <div className="text-left space-y-1">

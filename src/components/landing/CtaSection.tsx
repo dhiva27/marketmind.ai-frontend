@@ -11,7 +11,7 @@ interface CtaSectionProps {
 
 export function CtaSection({ onOpenDemoModal }: CtaSectionProps) {
   return (
-    <section className="py-14 bg-[#F8FAFC]">
+    <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-[32px] overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-purple-100 via-indigo-100 to-blue-100 border border-purple-200/60 shadow-md flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Left Content */}

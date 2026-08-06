@@ -32,7 +32,7 @@ export function MarqueeLogos() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="py-[40px] bg-white border-y border-slate-100 overflow-hidden select-none"
+      className="py-[40px] bg-white text-slate-950 overflow-hidden select-none"
     >
       <div className="max-w-7xl mx-auto px-4 text-center mb-5">
         <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#6B7280]">
@@ -40,7 +40,7 @@ export function MarqueeLogos() {
         </p>
       </div>
 
-      <div className="relative w-full overflow-hidden flex items-center">
+      <div className="relative w-full overflow-hidden flex items-center bg-white">
         {/* Soft edge fade gradients matching pure white background */}
         <div className="absolute left-0 top-0 bottom-0 w-28 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-28 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
@@ -49,7 +49,7 @@ export function MarqueeLogos() {
         <motion.div
           animate={{ x: ['0%', '-50%'] }}
           transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
-          className="flex items-center space-x-12 sm:space-x-16 whitespace-nowrap min-w-max"
+          className="flex items-center space-x-12 sm:space-x-16 whitespace-nowrap min-w-max bg-white"
         >
           {[...logos, ...logos].map((logo, index) => (
             <div
