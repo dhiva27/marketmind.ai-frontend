@@ -11,11 +11,7 @@ export function LandingNavbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -23,39 +19,38 @@ export function LandingNavbar() {
 
   const navLinks = [
     { name: 'Features', href: '#features' },
-    { name: 'Solutions', href: '#solutions' },
-    { name: 'How it Works', href: '#how-it-works' },
+    { name: 'Use Cases', href: '#how-it-works' },
     { name: 'Pricing', href: '#pricing' },
-    { name: 'Testimonials', href: '#testimonials' },
-    { name: 'FAQ', href: '#faq' },
+    { name: 'Resources', href: '#faq' },
+    { name: 'About', href: '#testimonials' },
   ];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         scrolled
-          ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 py-3 shadow-xs'
-          : 'bg-transparent py-5'
+          ? 'bg-[#F8FAFC]/90 backdrop-blur-md border-b border-slate-200/60 py-3 shadow-2xs'
+          : 'bg-[#F8FAFC]/80 backdrop-blur-xs py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <TrendingUp className="w-5 h-5 text-white dark:text-slate-900" />
+          <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shadow-xs">
+            <TrendingUp className="w-4 h-4 text-white" />
           </div>
-          <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
-            MarketMind<span className="text-blue-600 dark:text-blue-500">.ai</span>
+          <span className="font-extrabold text-lg tracking-tight text-slate-900">
+            MarketMind AI
           </span>
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
             >
               {link.name}
             </a>
@@ -63,29 +58,28 @@ export function LandingNavbar() {
         </nav>
 
         {/* Right CTA Buttons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-5">
           <Link
             href="/login"
-            className="text-sm font-semibold text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white px-3 py-2 transition-colors"
+            className="text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors"
           >
             Log in
           </Link>
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 font-semibold text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
-            <span>Get Started Free</span>
-            <ArrowRight className="w-4 h-4" />
+            Get Started Free
           </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-200/50 transition-colors"
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
@@ -96,7 +90,7 @@ export function LandingNavbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-6 shadow-xl"
+            className="md:hidden bg-white border-b border-slate-200 px-6 py-6 shadow-xl"
           >
             <div className="flex flex-col space-y-4">
               {navLinks.map((link) => (
@@ -104,27 +98,26 @@ export function LandingNavbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-base font-medium text-slate-800 dark:text-slate-200 py-1"
+                  className="text-sm font-medium text-slate-800 py-1"
                 >
                   {link.name}
                 </a>
               ))}
-              <hr className="border-slate-100 dark:border-slate-800 my-2" />
-              <div className="flex flex-col gap-3 pt-2">
+              <hr className="border-slate-100 my-2" />
+              <div className="flex flex-col gap-3 pt-1">
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-900 dark:text-white"
+                  className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-semibold shadow-md flex items-center justify-center gap-2"
+                  className="w-full text-center py-2.5 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-md"
                 >
-                  <span>Get Started Free</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Get Started Free
                 </Link>
               </div>
             </div>
