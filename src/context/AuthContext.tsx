@@ -10,6 +10,9 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
 } from 'firebase/auth';
 
 interface AuthContextType {
@@ -17,6 +20,8 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithGithub: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -34,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({
           uid: uid ?? '',
           email: email ?? '',
-          displayName: displayName ?? email?.split('@')[0] ?? '',
+          displayName: displayName ?? email?.split('@')[0] ?? 'User',
           photoURL: photoURL || undefined,
           createdAt: new Date().toISOString(),
         });
@@ -61,6 +66,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   };
 
+  const loginWithGoogle = async () => {
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+    setLoading(false);
+  };
+
+  const loginWithGithub = async () => {
+    setLoading(true);
+    const provider = new GithubAuthProvider();
+    await signInWithPopup(auth, provider);
+    setLoading(false);
+  };
+
   const logout = async () => {
     setLoading(true);
     await signOut(auth);
@@ -75,7 +94,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, signup, logout, resetPassword }}
+      value={{
+        user,
+        loading,
+        login,
+        signup,
+        loginWithGoogle,
+        loginWithGithub,
+        logout,
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>
