@@ -1,0 +1,24 @@
+# Node.js & Next.js
+node_modules/
+.next/
+out/
+dist/
+
+# Environment files
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.tsbuildinfo
+
+# Optional: ignore lock files if desired (but keep them)
+# package-lock.json
+# yarn.lock
