@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TrendingUp, ArrowRight, Menu, X } from 'lucide-react';
+import { TrendingUp, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function LandingNavbar() {
@@ -29,17 +29,17 @@ export function LandingNavbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         scrolled
-          ? 'bg-[#F8FAFC]/90 backdrop-blur-md border-b border-slate-200/60 py-3 shadow-2xs'
-          : 'bg-[#F8FAFC]/80 backdrop-blur-xs py-4'
+          ? 'bg-white/90 backdrop-blur-md border-b border-slate-200/60 py-2.5 shadow-2xs'
+          : 'bg-white/80 backdrop-blur-xs py-3.5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-slate-950 flex items-center justify-center shadow-xs">
             <TrendingUp className="w-4 h-4 text-white" />
           </div>
-          <span className="font-extrabold text-lg tracking-tight text-slate-900">
+          <span className="font-extrabold text-lg tracking-tight text-slate-950">
             MarketMind AI
           </span>
         </Link>
@@ -50,7 +50,7 @@ export function LandingNavbar() {
             <a
               key={link.name}
               href={link.href}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition-colors"
             >
               {link.name}
             </a>
@@ -61,13 +61,13 @@ export function LandingNavbar() {
         <div className="hidden md:flex items-center gap-5">
           <Link
             href="/login"
-            className="text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors"
+            className="text-xs font-semibold text-slate-700 hover:text-slate-950 transition-colors"
           >
             Log in
           </Link>
           <Link
             href="/signup"
-            className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             Get Started Free
           </Link>
@@ -76,7 +76,7 @@ export function LandingNavbar() {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-200/50 transition-colors"
+          className="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -108,14 +108,14 @@ export function LandingNavbar() {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900"
+                  className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-950"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-md"
+                  className="w-full text-center py-2.5 rounded-full bg-slate-950 text-white text-xs font-semibold shadow-md"
                 >
                   Get Started Free
                 </Link>

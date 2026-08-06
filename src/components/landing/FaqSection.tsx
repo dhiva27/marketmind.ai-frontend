@@ -31,27 +31,37 @@ export function FaqSection() {
   ];
 
   return (
-    <section id="faq" className="py-16 md:py-24 bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <section id="faq" className="py-12 md:py-14 bg-white">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header */}
-        <div className="text-left space-y-1">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="text-left max-w-xl"
+        >
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
             Frequently Asked Questions
           </h2>
-        </div>
+        </motion.div>
 
         {/* Accordion List */}
-        <div className="space-y-3">
+        <div className="space-y-3 max-w-4xl">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div
+              <motion.div
                 key={idx}
-                className="rounded-2xl border border-slate-200/60 bg-white overflow-hidden shadow-2xs"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.05, ease: 'easeOut' }}
+                className="rounded-[20px] border border-slate-200/60 bg-white overflow-hidden shadow-2xs"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-slate-950 hover:text-purple-600 transition-colors"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-slate-950 hover:text-purple-600 transition-colors"
                 >
                   <span>{faq.q}</span>
                   <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-slate-600">
@@ -65,15 +75,15 @@ export function FaqSection() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
                     >
-                      <div className="px-4 sm:px-5 pb-5 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">
+                      <div className="px-5 pb-5 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">
                         {faq.a}
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })}
         </div>

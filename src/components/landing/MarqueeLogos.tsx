@@ -31,10 +31,10 @@ export function MarqueeLogos() {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
       className="py-[40px] bg-white text-slate-950 overflow-hidden select-none"
     >
-      <div className="max-w-7xl mx-auto px-4 text-center mb-5">
+      <div className="max-w-[1280px] mx-auto px-4 text-center mb-4">
         <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#6B7280]">
           Trusted by 1000+ companies and marketers worldwide
         </p>

@@ -68,31 +68,31 @@ export function HowItWorksAndAudience() {
   ];
 
   return (
-    <section id="how-it-works" className="py-16 md:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
+    <section id="how-it-works" className="py-12 md:py-14 bg-white">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8">
           {/* How It Works (Left Side) */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-5">
             <h2 className="text-2xl font-black text-slate-950 tracking-tight">
               How It Works
             </h2>
 
-            <div className="relative pl-6 border-l-2 border-slate-200/80 space-y-5">
+            <div className="relative pl-6 border-l-2 border-slate-200/80 space-y-4">
               {steps.map((step, idx) => (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, x: -15 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: idx * 0.08 }}
+                  transition={{ duration: 0.6, delay: idx * 0.08, ease: 'easeOut' }}
                   className="relative group"
                 >
-                  <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-black flex items-center justify-center border-2 border-white shadow-2xs">
+                  <div className="absolute -left-[35px] top-0 w-7.5 h-7.5 rounded-full bg-purple-100 text-purple-700 text-xs font-black flex items-center justify-center border-2 border-white shadow-2xs">
                     {step.num}
                   </div>
 
-                  <div className="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-2xs space-y-0.5">
-                    <h3 className="text-sm font-bold text-slate-950">
+                  <div className="bg-white p-5 rounded-[20px] border border-slate-200/60 shadow-2xs space-y-0.5 hover:border-slate-300 transition-colors">
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-950">
                       {step.title}
                     </h3>
                     <p className="text-xs text-slate-500">
@@ -105,12 +105,12 @@ export function HowItWorksAndAudience() {
           </div>
 
           {/* Who Is It For? (Right Side) */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-5">
             <h2 className="text-2xl font-black text-slate-950 tracking-tight">
               Who Is It For?
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {audience.map((item, idx) => {
                 const Icon = item.icon;
                 return (
@@ -119,8 +119,9 @@ export function HowItWorksAndAudience() {
                     initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: idx * 0.05 }}
-                    className="p-4 rounded-2xl bg-white border border-slate-200/60 shadow-2xs space-y-1.5 hover:border-slate-300 transition-colors"
+                    transition={{ duration: 0.6, delay: idx * 0.06, ease: 'easeOut' }}
+                    whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.3 } }}
+                    className="p-6 rounded-[20px] bg-white border border-slate-200/60 shadow-2xs space-y-1.5 hover:border-slate-300 transition-colors"
                   >
                     <div className={`w-8 h-8 rounded-xl ${item.color} flex items-center justify-center`}>
                       <Icon className="w-4 h-4" />

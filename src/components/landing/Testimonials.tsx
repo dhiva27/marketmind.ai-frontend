@@ -30,29 +30,36 @@ export function Testimonials() {
   ];
 
   return (
-    <section id="testimonials" className="py-16 md:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-10">
+    <section id="testimonials" className="py-12 md:py-14 bg-white">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         {/* Header */}
-        <div className="max-w-xl mx-auto space-y-2">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="max-w-xl mx-auto space-y-1.5"
+        >
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100/80 text-purple-700 text-xs font-semibold">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
             <span>Loved by Marketers</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
             What Our Users Say
           </h2>
-        </div>
+        </motion.div>
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
           {testimonials.map((t, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.08 }}
-              className="p-6 rounded-[24px] bg-white border border-slate-200/60 shadow-2xs space-y-4 flex flex-col justify-between"
+              transition={{ duration: 0.6, delay: idx * 0.08, ease: 'easeOut' }}
+              whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3 } }}
+              className="p-6 rounded-[20px] bg-white border border-slate-200/60 shadow-2xs space-y-4 flex flex-col justify-between"
             >
               <p className="text-xs text-slate-600 leading-relaxed italic font-medium">
                 "{t.text}"

@@ -6,13 +6,13 @@ import { TrendingUp, Send } from 'lucide-react';
 
 export function LandingFooter() {
   return (
-    <footer className="bg-white border-t border-slate-200/60 text-slate-500 text-xs py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+    <footer className="bg-white border-t border-slate-200/60 text-slate-500 text-xs py-10">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           {/* Brand Info */}
-          <div className="md:col-span-2 space-y-3">
+          <div className="md:col-span-2 space-y-2.5">
             <Link href="/" className="flex items-center gap-2 font-extrabold text-slate-950 text-base tracking-tight">
-              <div className="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center text-white">
+              <div className="w-6.5 h-6.5 rounded-lg bg-slate-900 flex items-center justify-center text-white">
                 <TrendingUp className="w-3.5 h-3.5" />
               </div>
               <span>MarketMind AI</span>
@@ -23,9 +23,9 @@ export function LandingFooter() {
           </div>
 
           {/* Product */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <h4 className="font-bold text-slate-950 text-xs">Product</h4>
-            <ul className="space-y-1.5 text-[11px]">
+            <ul className="space-y-1 text-[11px]">
               <li><a href="#features" className="hover:text-slate-950 transition-colors">Features</a></li>
               <li><a href="#pricing" className="hover:text-slate-950 transition-colors">Pricing</a></li>
               <li><a href="#solutions" className="hover:text-slate-950 transition-colors">Integrations</a></li>
@@ -34,9 +34,9 @@ export function LandingFooter() {
           </div>
 
           {/* Resources */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <h4 className="font-bold text-slate-950 text-xs">Resources</h4>
-            <ul className="space-y-1.5 text-[11px]">
+            <ul className="space-y-1 text-[11px]">
               <li><a href="#how-it-works" className="hover:text-slate-950 transition-colors">Blog</a></li>
               <li><a href="#testimonials" className="hover:text-slate-950 transition-colors">Guides</a></li>
               <li><a href="#faq" className="hover:text-slate-950 transition-colors">Templates</a></li>
@@ -45,12 +45,12 @@ export function LandingFooter() {
           </div>
 
           {/* Company & Newsletter */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <h4 className="font-bold text-slate-950 text-xs">Newsletter</h4>
             <p className="text-[11px] text-slate-500">
               Get the latest marketing tips and AI updates in your inbox.
             </p>
-            <div className="flex items-center gap-1.5 pt-1">
+            <div className="flex items-center gap-1.5 pt-0.5">
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -63,7 +63,7 @@ export function LandingFooter() {
           </div>
         </div>
 
-        <div className="pt-6 border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
+        <div className="pt-5 border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
           <div>© 2026 MarketMind AI. All rights reserved.</div>
           <div className="flex items-center space-x-4">
             <a href="#" className="hover:text-slate-700">Privacy Policy</a>
