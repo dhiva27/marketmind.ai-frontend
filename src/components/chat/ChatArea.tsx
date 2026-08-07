@@ -14,7 +14,8 @@ export function ChatArea() {
   const { user } = useAuthContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Aravind';
+  // Dynamic user name loaded from authenticated Firebase user
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,8 +37,8 @@ export function ChatArea() {
     {
       icon: FileText,
       title: 'Content Ideas',
-      desc: 'Generate content ideas for my blog about AI marketing.',
-      prompt: 'Generate content ideas for my blog about AI marketing.',
+      desc: 'Generate content ideas for my blog and AI marketing.',
+      prompt: 'Generate content ideas for my blog and AI marketing.',
     },
     {
       icon: Search,
@@ -64,14 +65,14 @@ export function ChatArea() {
                 alt="MarketMind AI Mascot"
                 width={96}
                 height={96}
-                className="object-contain mix-blend-multiply drop-shadow-md"
+                className="object-contain mix-blend-multiply drop-shadow-sm"
                 priority
               />
             </motion.div>
 
             <div className="space-y-1">
               <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                Hi {displayName}! 👋
+                Hi, {displayName}! 👋
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 font-medium">
                 How can I help you grow your business today?
@@ -88,11 +89,11 @@ export function ChatArea() {
                     onClick={() => sendMessage(item.prompt)}
                     className="p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-purple-300 hover:shadow-md transition-all flex items-start gap-3.5 group text-left"
                   >
-                    <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 group-hover:bg-[#7C3AED] group-hover:text-white transition-colors">
                       <Icon className="w-4 h-4 stroke-[2]" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-xs text-slate-950 group-hover:text-purple-600 transition-colors">
+                      <h4 className="font-bold text-xs text-slate-950 group-hover:text-[#7C3AED] transition-colors">
                         {item.title}
                       </h4>
                       <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
