@@ -24,19 +24,43 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 const INITIAL_CHATS: Chat[] = [
   {
     id: 'chat_1',
-    title: 'Market Analysis & Strategy',
-    createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-    messagesCount: 4,
-    lastMessageSnippet: 'Here is a breakdown of quarterly market dynamics...',
+    title: 'Marketing strategy for...',
+    createdAt: new Date(Date.now() - 120000).toISOString(),
+    updatedAt: new Date(Date.now() - 120000).toISOString(),
+    messagesCount: 2,
+    lastMessageSnippet: 'Create a marketing strategy for my AI SaaS product',
   },
   {
     id: 'chat_2',
-    title: 'Financial Forecasting Model',
+    title: 'Best SEO keywords...',
+    createdAt: new Date(Date.now() - 3600000).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000).toISOString(),
+    messagesCount: 2,
+    lastMessageSnippet: 'Top keywords for AI marketing tools...',
+  },
+  {
+    id: 'chat_3',
+    title: 'Competitor analysis...',
+    createdAt: new Date(Date.now() - 3600000 * 3).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 3).toISOString(),
+    messagesCount: 2,
+    lastMessageSnippet: 'Competitor SWOT breakdown...',
+  },
+  {
+    id: 'chat_4',
+    title: 'Ad copy for SaaS...',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString(),
+    messagesCount: 2,
+    lastMessageSnippet: 'High converting Facebook & Google ad headlines...',
+  },
+  {
+    id: 'chat_5',
+    title: 'Content ideas for blog...',
     createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
     messagesCount: 2,
-    lastMessageSnippet: 'Python script for Monte Carlo portfolio simulation...',
+    lastMessageSnippet: '10 viral blog topics for SaaS growth...',
   },
 ];
 
@@ -46,62 +70,25 @@ const INITIAL_MESSAGES: Record<string, Message[]> = {
       id: 'msg_1',
       chatId: 'chat_1',
       sender: 'user',
-      content: 'Can you analyze the competitive landscape for SaaS platforms in 2026?',
-      timestamp: new Date(Date.now() - 3600000 * 2.5).toISOString(),
+      content: 'Create a marketing strategy for my AI SaaS product',
+      timestamp: '10:30 AM',
     },
     {
       id: 'msg_2',
       chatId: 'chat_1',
       sender: 'assistant',
-      content: `### Executive Overview: SaaS Market Trends
+      content: `Here's a comprehensive marketing strategy for your AI SaaS product:
 
-1. **AI Native Integration**: Standard SaaS platforms are transitioning to agent-assisted workflows.
-2. **Unit Economics**: Net Revenue Retention (NRR) targets have shifted towards 115%+ for enterprise tiers.
-3. **Data Security**: On-premise hybrid deployments and strict SOC2 / GDPR compliance remain top buying criteria.
+**1. Product Positioning**
+Position your AI SaaS as an all-in-one solution that helps businesses save time and increase productivity.
 
-\`\`\`typescript
-interface MarketMetrics {
-  nrr: number; // Net Revenue Retention %
-  cacPaybackMonths: number;
-  ltvCacRatio: number;
-}
+**2. Target Audience**
+• Startups and small businesses
+• Marketing teams and agencies
+• E-commerce businesses
 
-const benchmark: MarketMetrics = {
-  nrr: 118,
-  cacPaybackMonths: 14,
-  ltvCacRatio: 4.2
-};
-\`\`\`
-`,
-      timestamp: new Date(Date.now() - 3600000 * 2.4).toISOString(),
-    },
-  ],
-  chat_2: [
-    {
-      id: 'msg_3',
-      chatId: 'chat_2',
-      sender: 'user',
-      content: 'Write a Python snippet to parse CSV financial figures.',
-      timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
-    },
-    {
-      id: 'msg_4',
-      chatId: 'chat_2',
-      sender: 'assistant',
-      content: `Here is a lightweight Python snippet using \`pandas\` to ingest financial data and calculate quarter-over-quarter revenue growth:
-
-\`\`\`python
-import pandas as pd
-
-def compute_growth(filepath: str) -> pd.DataFrame:
-    df = pd.read_csv(filepath)
-    df['QoQ_Growth'] = df['Revenue'].pct_change() * 100
-    return df
-
-print("Ingestion script ready.")
-\`\`\`
-`,
-      timestamp: new Date(Date.now() - 86400000 * 1.9).toISOString(),
+**3. Key Marketing Channels...**`,
+      timestamp: '10:31 AM',
     },
   ],
 };
@@ -113,14 +100,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Sync to local storage if available
+  // Sync with local storage
   useEffect(() => {
     const savedChats = localStorage.getItem('marketmind_chats');
     if (savedChats) {
       try {
         setChats(JSON.parse(savedChats));
       } catch {
-        // Fallback to initial
+        // Fallback
       }
     }
   }, []);
@@ -156,33 +143,32 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       targetChatId = createNewChat();
     }
 
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     const userMsg: Message = {
       id: `msg_${Date.now()}`,
       chatId: targetChatId,
       sender: 'user',
       content,
-      timestamp: new Date().toISOString(),
+      timestamp: timeStr,
       attachments,
     };
 
-    // Update messages map
     setMessagesMap((prev) => ({
       ...prev,
       [targetChatId!]: [...(prev[targetChatId!] || []), userMsg],
     }));
 
-    // Auto-update chat title if default
     setChats((prev) =>
       prev.map((c) => {
         if (c.id === targetChatId) {
-          const title = c.title === 'New Conversation' ? (content.slice(0, 30) || 'New Chat') : c.title;
+          const title = c.title === 'New Conversation' ? (content.slice(0, 24) + '...') : c.title;
           return { ...c, title, updatedAt: new Date().toISOString(), lastMessageSnippet: content };
         }
         return c;
       })
     );
 
-    // Simulate streaming AI assistant response
     setIsGenerating(true);
 
     const assistantMsgId = `msg_stream_${Date.now()}`;
@@ -191,7 +177,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       chatId: targetChatId,
       sender: 'assistant',
       content: '',
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isStreaming: true,
     };
 
@@ -200,26 +186,26 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       [targetChatId!]: [...(prev[targetChatId!] || []), assistantMsg],
     }));
 
-    const sampleResponse = `Thank you for your message! Here is an automated intelligent response from **MarketMind-AI**:
+    // AI Marketing Assistant response template
+    const sampleResponse = `Here's a tailored marketing strategy breakdown for "${content.slice(0, 40)}":
 
-- **Received Input**: "${content.slice(0, 50)}${content.length > 50 ? '...' : ''}"
-- **Attachments Processed**: ${attachments && attachments.length > 0 ? attachments.map(a => a.name).join(', ') : 'None'}
+**1. Strategic Messaging & Positioning**
+• Focus on ROI, speed, and automated efficiency.
+• Highlighting key features that solve critical customer pain points.
 
-\`\`\`json
-{
-  "status": "success",
-  "model": "MarketMind-v1-Turbo",
-  "confidenceScore": 0.985,
-  "executionTime": "140ms"
-}
-\`\`\`
+**2. Target Customer Segments**
+• High-growth tech startups & SaaS founders
+• In-house marketing managers looking to scale production
+• Agencies offering digital growth services
 
-Feel free to ask follow-up questions or attach additional financial documents!`;
+**3. Actionable Launch Roadmap**
+• **Phase 1**: Organic SEO & thought leadership content publishing
+• **Phase 2**: High-converting Meta & Google ad retargeting campaigns
+• **Phase 3**: Influencer partnerships and community outreach`;
 
-    // Stream characters sequentially
     let index = 0;
     const interval = setInterval(() => {
-      index += 3;
+      index += 4;
       const currentChunk = sampleResponse.slice(0, index);
 
       setMessagesMap((prev) => {
@@ -245,7 +231,7 @@ Feel free to ask follow-up questions or attach additional financial documents!`;
           };
         });
       }
-    }, 25);
+    }, 20);
   };
 
   const regenerateLastResponse = async () => {
@@ -253,18 +239,15 @@ Feel free to ask follow-up questions or attach additional financial documents!`;
     const msgs = messagesMap[activeChatId] || [];
     if (msgs.length < 2) return;
 
-    // Find last user prompt
     const lastUserMsgIndex = [...msgs].reverse().findIndex((m) => m.sender === 'user');
     if (lastUserMsgIndex === -1) return;
 
     const actualIndex = msgs.length - 1 - lastUserMsgIndex;
     const lastUserMsg = msgs[actualIndex];
 
-    // Remove responses after user msg
     const truncatedMsgs = msgs.slice(0, actualIndex + 1);
     setMessagesMap((prev) => ({ ...prev, [activeChatId]: truncatedMsgs }));
 
-    // Trigger message send
     await sendMessage(lastUserMsg.content, lastUserMsg.attachments);
   };
 

@@ -1,57 +1,39 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { useChat } from '@/hooks/useChat';
-import { useTheme } from '@/hooks/useTheme';
-import { PanelLeft, Sun, Moon, Settings, User } from 'lucide-react';
+import { PanelLeft, ChevronDown, Crown } from 'lucide-react';
 
 export function Header() {
-  const { toggleSidebar, chats, activeChatId } = useChat();
-  const { theme, toggleTheme } = useTheme();
-
-  const activeChat = chats.find((c) => c.id === activeChatId);
+  const { toggleSidebar, createNewChat } = useChat();
 
   return (
-    <header className="h-14 border-b border-slate-200 dark:border-slate-800/80 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md px-4 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-14 border-b border-slate-200/80 bg-white px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 select-none">
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all"
+          className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
           aria-label="Toggle Sidebar"
         >
           <PanelLeft className="w-5 h-5" />
         </button>
 
-        <h1 className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate max-w-xs sm:max-w-md">
-          {activeChat ? activeChat.title : 'MarketMind Assistant'}
-        </h1>
+        {/* New Chat Dropdown trigger */}
+        <button
+          onClick={() => createNewChat()}
+          className="flex items-center gap-1.5 text-xs font-bold text-slate-900 border border-slate-200/90 rounded-xl px-3 py-1.5 hover:bg-slate-50 transition-colors shadow-2xs"
+        >
+          <span>New Chat</span>
+          <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+        </button>
       </div>
 
-      <div className="flex items-center gap-1.5">
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all"
-          aria-label="Toggle Theme"
-        >
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+      {/* Upgrade Plan Button */}
+      <div className="flex items-center gap-3">
+        <button className="border border-purple-200/80 text-purple-700 bg-purple-50 hover:bg-purple-100/80 font-bold text-xs px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors shadow-2xs">
+          <Crown className="w-3.5 h-3.5 text-purple-600" />
+          <span>Upgrade Plan</span>
         </button>
-
-        <Link
-          href="/settings"
-          className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all"
-          title="Settings"
-        >
-          <Settings className="w-4 h-4" />
-        </Link>
-
-        <Link
-          href="/profile"
-          className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all"
-          title="Profile"
-        >
-          <User className="w-4 h-4" />
-        </Link>
       </div>
     </header>
   );
