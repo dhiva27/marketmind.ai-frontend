@@ -10,7 +10,7 @@ export function FaqSection() {
   const faqs = [
     {
       q: 'What is MarketMind AI?',
-      a: 'MarketMind AI is an all-in-one AI marketing assistant designed to automate competitor analysis, SEO optimization, ad copywriting, content creation, and market strategy.',
+      a: 'MarketMind AI is an all-in-one AI marketing assistant designed to automate competitor analysis, SEO optimization, ad copywriting, content creation, and growth strategy.',
     },
     {
       q: 'Is there a free trial?',
@@ -18,27 +18,27 @@ export function FaqSection() {
     },
     {
       q: 'Can I cancel anytime?',
-      a: 'Absolutely. You can manage or cancel your subscription at any time with a single click from your account settings page.',
+      a: 'Optionally manage or cancel your subscription at any time with a single click from your account settings page.',
     },
     {
       q: 'Is my data safe?',
-      a: 'Yes. We use enterprise-grade encryption (SSL/TLS), Firebase authentication, and strict privacy protocols.',
+      a: 'Yes. We use enterprise-grade encryption (SSL/TLS), Firebase authentication, and strict data privacy protocols.',
     },
     {
       q: 'Can I use MarketMind AI for my clients?',
-      a: 'Yes! Digital agencies, freelancers, and consultants use MarketMind AI daily to generate marketing strategies and content reports for client brands.',
+      a: 'Yes! Digital marketing agencies, freelancers, and consultants use MarketMind AI daily to generate marketing strategies and content reports for client brands.',
     },
   ];
 
   return (
-    <section id="faq" className="py-12 md:py-14 bg-white">
+    <section id="faq" className="py-10 md:py-12 bg-white">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
           className="text-left max-w-xl"
         >
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
@@ -56,16 +56,16 @@ export function FaqSection() {
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.05, ease: 'easeOut' }}
-                className="rounded-[20px] border border-slate-200/60 bg-white overflow-hidden shadow-2xs"
+                transition={{ duration: 0.4, delay: idx * 0.04, ease: 'easeOut' }}
+                className="rounded-[20px] border border-slate-200/80 bg-white overflow-hidden shadow-2xs hover:border-slate-300 transition-colors duration-200"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-slate-950 hover:text-purple-600 transition-colors"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-slate-950 hover:text-purple-600 transition-colors duration-200"
                 >
                   <span>{faq.q}</span>
-                  <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-slate-600">
-                    {isOpen ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-slate-600">
+                    {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                   </div>
                 </button>
 
@@ -75,9 +75,9 @@ export function FaqSection() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
                     >
-                      <div className="px-5 pb-5 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">
+                      <div className="px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3 font-normal">
                         {faq.a}
                       </div>
                     </motion.div>

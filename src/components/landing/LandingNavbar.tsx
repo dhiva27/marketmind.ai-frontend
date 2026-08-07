@@ -27,16 +27,16 @@ export function LandingNavbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ease-out ${
         scrolled
-          ? 'bg-white/90 backdrop-blur-md border-b border-slate-200/60 py-2.5 shadow-2xs'
-          : 'bg-white/80 backdrop-blur-xs py-3.5'
+          ? 'bg-white/95 backdrop-blur-md border-b border-slate-200/80 py-3 shadow-2xs'
+          : 'bg-white/80 backdrop-blur-xs py-4'
       }`}
     >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-slate-950 flex items-center justify-center shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-slate-950 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200">
             <TrendingUp className="w-4 h-4 text-white" />
           </div>
           <span className="font-extrabold text-lg tracking-tight text-slate-950">
@@ -44,13 +44,13 @@ export function LandingNavbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav Links */}
+        {/* Desktop Nav Links - Comfortable Medium Font Size */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-950 transition-colors"
+              className="text-sm font-semibold text-slate-700 hover:text-purple-600 transition-colors duration-200"
             >
               {link.name}
             </a>
@@ -61,13 +61,13 @@ export function LandingNavbar() {
         <div className="hidden md:flex items-center gap-5">
           <Link
             href="/login"
-            className="text-xs font-semibold text-slate-700 hover:text-slate-950 transition-colors"
+            className="text-sm font-semibold text-slate-700 hover:text-slate-950 transition-colors duration-200"
           >
             Log in
           </Link>
           <Link
             href="/signup"
-            className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm shadow-xs transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           >
             Get Started Free
           </Link>
@@ -90,6 +90,7 @@ export function LandingNavbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             className="md:hidden bg-white border-b border-slate-200 px-6 py-6 shadow-xl"
           >
             <div className="flex flex-col space-y-4">
@@ -98,7 +99,7 @@ export function LandingNavbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium text-slate-800 py-1"
+                  className="text-sm font-semibold text-slate-800 py-1"
                 >
                   {link.name}
                 </a>
@@ -108,14 +109,14 @@ export function LandingNavbar() {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-950"
+                  className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-950"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-full bg-slate-950 text-white text-xs font-semibold shadow-md"
+                  className="w-full text-center py-2.5 rounded-full bg-slate-950 text-white text-sm font-semibold shadow-md"
                 >
                   Get Started Free
                 </Link>
