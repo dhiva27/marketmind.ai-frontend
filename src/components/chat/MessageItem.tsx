@@ -20,7 +20,8 @@ export function MessageItem({ message }: MessageItemProps) {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState<boolean | null>(null);
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Aravind';
+  // Dynamic user name from authenticated Firebase user
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -38,20 +39,20 @@ export function MessageItem({ message }: MessageItemProps) {
       {/* Avatar */}
       <div className="shrink-0 mt-0.5">
         {isUser ? (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white font-bold text-xs flex items-center justify-center overflow-hidden shadow-2xs">
+          <div className="w-8.5 h-8.5 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white font-bold text-xs flex items-center justify-center overflow-hidden shadow-2xs">
             {user?.photoURL ? (
-              <Image src={user.photoURL} alt={displayName} width={32} height={32} className="object-cover" />
+              <Image src={user.photoURL} alt={displayName} width={34} height={34} className="object-cover" />
             ) : (
               <span>{displayName.charAt(0).toUpperCase()}</span>
             )}
           </div>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-white border border-purple-200 overflow-hidden flex items-center justify-center shadow-2xs">
+          <div className="w-8.5 h-8.5 rounded-full bg-white border border-purple-200 overflow-hidden flex items-center justify-center shadow-2xs">
             <Image
               src="/mascot.jpg"
               alt="MarketMind AI Mascot"
-              width={32}
-              height={32}
+              width={34}
+              height={34}
               className="object-contain mix-blend-multiply"
             />
           </div>
@@ -64,12 +65,12 @@ export function MessageItem({ message }: MessageItemProps) {
           className={cn(
             'p-4 text-xs sm:text-sm leading-relaxed transition-all shadow-2xs',
             isUser
-              ? 'bg-purple-50/90 text-slate-900 border border-purple-100 rounded-2xl rounded-tr-xs max-w-md sm:max-w-lg'
+              ? 'bg-purple-50 text-slate-900 border border-purple-100/90 rounded-2xl rounded-tr-xs max-w-md sm:max-w-lg font-medium'
               : 'bg-white text-slate-900 border border-slate-200/90 rounded-2xl rounded-tl-xs max-w-xl sm:max-w-2xl space-y-2'
           )}
         >
           {isUser ? (
-            <p className="whitespace-pre-wrap font-medium">{message.content}</p>
+            <p className="whitespace-pre-wrap">{message.content}</p>
           ) : (
             <div className="space-y-2 text-slate-800">
               <ReactMarkdown
