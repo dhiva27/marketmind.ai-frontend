@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useChat } from '@/hooks/useChat';
 import { useAuthContext } from '@/context/AuthContext';
 import {
@@ -18,13 +19,31 @@ import {
   Settings,
   MessageSquare,
   ChevronRight,
+  User as UserIcon,
+  HelpCircle,
+  LogOut,
+  Pencil,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
+  const router = useRouter();
   const { sidebarOpen, setSidebarOpen, chats, activeChatId, setActiveChatId, createNewChat } = useChat();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close popup menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, href: '#', active: false },
@@ -45,8 +64,18 @@ export function Sidebar() {
     { id: 'chat_5', title: 'Content ideas for blog...', time: '2d ago' },
   ];
 
-  // Dynamic user name from Firebase Auth
+  // Dynamic user name & email loaded from authenticated Firebase user
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
+  const email = user?.email || 'user@marketmind.ai';
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/login');
+    } catch {
+      // Fallback
+    }
+  };
 
   return (
     <>
@@ -147,19 +176,21 @@ export function Sidebar() {
             </div>
           </div>
 
-          {/* Bottom User Profile */}
-          <div className="pt-3 border-t border-slate-200/80">
-            <Link
-              href="/profile"
-              className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100/80 transition-colors group"
+          {/* Bottom User Profile Card & Interactive Popup Menu */}
+          <div className="pt-3 border-t border-slate-200/80 relative" ref={menuRef}>
+            {/* User Profile Trigger Button */}
+            <button
+              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+              className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-100/80 transition-colors group text-left"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden shadow-xs">
+                <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden shadow-xs">
                   {user?.photoURL ? (
                     <Image src={user.photoURL} alt={displayName} width={32} height={32} className="object-cover" />
                   ) : (
                     <span>{displayName.charAt(0).toUpperCase()}</span>
                   )}
+                  <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white" />
                 </div>
                 <div className="min-w-0">
                   <div className="font-bold text-xs text-slate-950 truncate">{displayName}</div>
@@ -167,7 +198,71 @@ export function Sidebar() {
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-950 transition-colors" />
-            </Link>
+            </button>
+
+            {/* Profile Floating Popup Menu matching reference UI */}
+            {profileMenuOpen && (
+              <div className="absolute bottom-14 left-0 w-64 bg-white rounded-2xl p-3.5 shadow-2xl border border-slate-200/90 z-50 animate-fade-in space-y-3">
+                {/* Header User Info */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="relative w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white text-sm font-bold shrink-0 overflow-hidden">
+                      {user?.photoURL ? (
+                        <Image src={user.photoURL} alt={displayName} width={36} height={36} className="object-cover" />
+                      ) : (
+                        <span>{displayName.charAt(0).toUpperCase()}</span>
+                      )}
+                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-bold text-xs text-slate-950 truncate">{displayName}</div>
+                      <div className="text-[11px] text-slate-400 truncate">{email}</div>
+                    </div>
+                  </div>
+                  <Link href="/profile" onClick={() => setProfileMenuOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100">
+                    <Pencil className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+
+                {/* Menu Items */}
+                <div className="space-y-1 text-xs font-semibold text-slate-700">
+                  <Link
+                    href="/profile"
+                    onClick={() => setProfileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100/80 hover:text-slate-950 transition-colors"
+                  >
+                    <UserIcon className="w-4 h-4 text-slate-500" />
+                    <span>My Profile</span>
+                  </Link>
+                  <Link
+                    href="/settings"
+                    onClick={() => setProfileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100/80 hover:text-slate-950 transition-colors"
+                  >
+                    <Settings className="w-4 h-4 text-slate-500" />
+                    <span>Settings</span>
+                  </Link>
+                  <a
+                    href="#faq"
+                    onClick={() => setProfileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-100/80 hover:text-slate-950 transition-colors"
+                  >
+                    <HelpCircle className="w-4 h-4 text-slate-500" />
+                    <span>Help & Support</span>
+                  </a>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left"
+                  >
+                    <LogOut className="w-4 h-4 text-rose-600" />
+                    <span>Log out</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </aside>
