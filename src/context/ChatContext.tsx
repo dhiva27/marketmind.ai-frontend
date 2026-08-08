@@ -46,22 +46,6 @@ const INITIAL_CHATS: Chat[] = [
     messagesCount: 2,
     lastMessageSnippet: 'Competitor SWOT breakdown...',
   },
-  {
-    id: 'chat_4',
-    title: 'Ad copy for SaaS...',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000).toISOString(),
-    messagesCount: 2,
-    lastMessageSnippet: 'High converting Facebook & Google ad headlines...',
-  },
-  {
-    id: 'chat_5',
-    title: 'Content ideas for blog...',
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    messagesCount: 2,
-    lastMessageSnippet: '10 viral blog topics for SaaS growth...',
-  },
 ];
 
 const INITIAL_MESSAGES: Record<string, Message[]> = {
@@ -80,14 +64,17 @@ const INITIAL_MESSAGES: Record<string, Message[]> = {
       content: `Here's a comprehensive marketing strategy for your AI SaaS product:
 
 **1. Product Positioning**
-Position your AI SaaS as an all-in-one solution that helps businesses save time and increase productivity.
+Position your AI SaaS as an all-in-one growth solution that helps businesses automate marketing workflows and increase revenue.
 
 **2. Target Audience**
-• Startups and small businesses
-• Marketing teams and agencies
-• E-commerce businesses
+• High-growth tech startups & SaaS founders
+• In-house marketing teams looking to scale production
+• E-commerce brands & digital agencies
 
-**3. Key Marketing Channels...**`,
+**3. Key Distribution Channels**
+• Organic Search (SEO) & thought-leadership articles
+• Targeted Meta & Google Search campaigns
+• Product-Led Growth (PLG) with fast time-to-value free trial`,
       timestamp: '10:31 AM',
     },
   ],
@@ -186,27 +173,53 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       [targetChatId!]: [...(prev[targetChatId!] || []), assistantMsg],
     }));
 
-    // AI Marketing Assistant response template
-    const sampleResponse = `Here's a tailored marketing strategy breakdown for "${content.slice(0, 40)}":
+    // Call Google Gemini API via environment variable
+    const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+    let fullResponseText = '';
 
-**1. Strategic Messaging & Positioning**
-• Focus on ROI, speed, and automated efficiency.
-• Highlighting key features that solve critical customer pain points.
+    if (geminiApiKey) {
+      try {
+        const systemPrompt = "You are MarketMind AI, a world-class AI marketing strategist and growth advisor. Provide ultra-structured, highly actionable, concise marketing strategies, campaign ideas, copy advice, and competitive insights.";
+        
+        const payload = {
+          system_instruction: {
+            parts: [{ text: systemPrompt }],
+          },
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: content }],
+            },
+          ],
+        };
 
-**2. Target Customer Segments**
-• High-growth tech startups & SaaS founders
-• In-house marketing managers looking to scale production
-• Agencies offering digital growth services
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiApiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          }
+        );
 
-**3. Actionable Launch Roadmap**
-• **Phase 1**: Organic SEO & thought leadership content publishing
-• **Phase 2**: High-converting Meta & Google ad retargeting campaigns
-• **Phase 3**: Influencer partnerships and community outreach`;
+        const data = await res.json();
+        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+          fullResponseText = data.candidates[0].content.parts[0].text;
+        } else {
+          throw new Error('Invalid Gemini API response');
+        }
+      } catch {
+        fullResponseText = `Here is an actionable marketing strategy breakdown for "${content.slice(0, 40)}":\n\n**1. Strategic Messaging & Positioning**\n• Highlight direct ROI, automated efficiency, and time savings.\n• Focus on solving specific pain points for your target ICP.\n\n**2. Key Marketing Channels**\n• Organic Search (SEO) and high-value industry guides\n• Targeted Google Search ads & Meta social retargeting\n• Community outreach and founder-led marketing on LinkedIn & Twitter.`;
+      }
+    } else {
+      fullResponseText = `Here is an actionable marketing strategy breakdown for "${content.slice(0, 40)}":\n\n**1. Strategic Messaging & Positioning**\n• Highlight direct ROI, automated efficiency, and time savings.\n• Focus on solving specific pain points for your target ICP.\n\n**2. Key Marketing Channels**\n• Organic Search (SEO) and high-value industry guides\n• Targeted Google Search ads & Meta social retargeting\n• Community outreach and founder-led marketing on LinkedIn & Twitter.`;
+    }
 
+    // Stream text into UI smoothly
     let index = 0;
     const interval = setInterval(() => {
-      index += 4;
-      const currentChunk = sampleResponse.slice(0, index);
+      index += 5;
+      const currentChunk = fullResponseText.slice(0, index);
 
       setMessagesMap((prev) => {
         const list = prev[targetChatId!] || [];
@@ -218,7 +231,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         };
       });
 
-      if (index >= sampleResponse.length) {
+      if (index >= fullResponseText.length) {
         clearInterval(interval);
         setIsGenerating(false);
         setMessagesMap((prev) => {
@@ -231,7 +244,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           };
         });
       }
-    }, 20);
+    }, 15);
   };
 
   const regenerateLastResponse = async () => {
