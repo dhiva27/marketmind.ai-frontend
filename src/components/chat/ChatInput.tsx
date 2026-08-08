@@ -29,23 +29,23 @@ export function ChatInput() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto relative px-2">
-      {/* Exact Pill Shape Chat Input Component matching reference */}
+    <div className="w-full max-w-2xl mx-auto relative">
+      {/* Exact Pill Shape Chat Input Bar matching reference screenshot */}
       <form
         onSubmit={handleSubmit}
-        className="relative rounded-full border border-purple-500/20 bg-[#191020]/90 backdrop-blur-md shadow-[0_0_30px_rgba(168,85,247,0.22)] px-4 py-3 flex items-center justify-between gap-3 transition-all duration-200 focus-within:border-purple-500/40 focus-within:shadow-[0_0_35px_rgba(168,85,247,0.35)]"
+        className="relative rounded-full border border-purple-500/30 bg-[#180E24]/95 backdrop-blur-md shadow-[0_0_35px_rgba(109,0,255,0.28)] px-5 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 focus-within:border-purple-500/50 focus-within:shadow-[0_0_40px_rgba(109,0,255,0.4)]"
       >
         {/* Plus Icon on Left */}
         <button
           type="button"
           onClick={() => inputRef.current?.focus()}
           className="p-1 text-slate-300 hover:text-white transition-colors shrink-0"
-          title="Add attachment or action"
+          title="Add attachment"
         >
-          <Plus className="w-5 h-5 stroke-[2]" />
+          <Plus className="w-5 h-5 stroke-[1.75]" />
         </button>
 
-        {/* Input Text Area */}
+        {/* Text Input */}
         <input
           ref={inputRef}
           type="text"
@@ -58,20 +58,20 @@ export function ChatInput() {
         />
 
         {/* Right Section: Model Selector Dropdown & Microphone Icon */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Model Selector Dropdown */}
+        <div className="flex items-center gap-3.5 shrink-0">
+          {/* Model Selector Dropdown ("Flash v") */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-              className="flex items-center gap-1 text-xs sm:text-sm font-medium text-slate-300 hover:text-white px-2 py-1 rounded-lg hover:bg-purple-900/30 transition-colors"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-normal text-slate-300 hover:text-white px-2 py-1 rounded-lg hover:bg-purple-900/30 transition-colors"
             >
               <span>{model}</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {modelDropdownOpen && (
-              <div className="absolute right-0 bottom-10 w-36 bg-[#191020] border border-purple-500/30 rounded-xl shadow-xl p-1.5 z-50 text-xs text-slate-200 space-y-1">
+              <div className="absolute right-0 bottom-10 w-36 bg-[#180E24] border border-purple-500/30 rounded-xl shadow-2xl p-1.5 z-50 text-xs text-slate-200 space-y-1">
                 {['Flash', 'Pro 2.0', 'Ultra Strategy'].map((m) => (
                   <button
                     key={m}
@@ -81,7 +81,7 @@ export function ChatInput() {
                       setModelDropdownOpen(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-purple-900/40 transition-colors ${
-                      model === m ? 'font-bold text-purple-400 bg-purple-950/50' : ''
+                      model === m ? 'font-bold text-purple-400 bg-purple-950/60' : ''
                     }`}
                   >
                     {m}
@@ -106,7 +106,7 @@ export function ChatInput() {
               className="p-1 text-slate-300 hover:text-white transition-colors"
               title="Voice Input"
             >
-              <Mic className="w-5 h-5 stroke-[1.75]" />
+              <Mic className="w-5 h-5 stroke-[1.5]" />
             </button>
           )}
         </div>
