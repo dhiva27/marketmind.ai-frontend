@@ -7,11 +7,11 @@ import { ChatArea } from '@/components/chat/ChatArea';
 
 export default function ChatPage() {
   return (
-    <div className="h-screen flex overflow-hidden bg-slate-50 dark:bg-slate-950">
-      {/* Collapsible Responsive Sidebar */}
+    <div className="h-screen flex overflow-hidden bg-[#12001F] text-white">
+      {/* Narrow Vertical Icon Sidebar */}
       <Sidebar />
 
-      {/* Main Chat Workspace */}
+      {/* Main Workspace */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
         <Header />
         <ChatArea />

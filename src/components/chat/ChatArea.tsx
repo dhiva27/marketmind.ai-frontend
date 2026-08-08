@@ -1,114 +1,83 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import Image from 'next/image';
 import { useChat } from '@/hooks/useChat';
 import { useAuthContext } from '@/context/AuthContext';
 import { MessageItem } from './MessageItem';
 import { ChatInput } from './ChatInput';
-import { Target, Users, FileText, Search } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export function ChatArea() {
-  const { messages, sendMessage } = useChat();
+  const { messages } = useChat();
   const { user } = useAuthContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Dynamic user name loaded automatically from authenticated Firebase user
+  // Dynamic user name from authenticated Firebase user
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const suggestions = [
-    {
-      icon: Target,
-      title: 'Marketing Strategy',
-      desc: 'Create a complete marketing strategy for my SaaS startup.',
-      prompt: 'Create a marketing strategy for my AI SaaS product',
-    },
-    {
-      icon: Users,
-      title: 'Competitor Analysis',
-      desc: 'Analyze my competitors and find their strengths and weaknesses.',
-      prompt: 'Analyze my competitors and find their strengths and weaknesses.',
-    },
-    {
-      icon: FileText,
-      title: 'Content Ideas',
-      desc: 'Generate content ideas for my blog and AI marketing.',
-      prompt: 'Generate content ideas for my blog and AI marketing.',
-    },
-    {
-      icon: Search,
-      title: 'SEO Optimization',
-      desc: 'Help me optimize my website for better search rankings.',
-      prompt: 'Help me optimize my website for better search rankings.',
-    },
-  ];
+  // Generate background star particles
+  const starParticles = Array.from({ length: 30 }).map((_, i) => ({
+    id: i,
+    top: `${(i * 17) % 95}%`,
+    left: `${(i * 23) % 95}%`,
+    size: `${(i % 3) + 1.5}px`,
+    duration: `${3 + (i % 4)}s`,
+    delay: `${(i % 5) * 0.6}s`,
+  }));
 
   return (
-    <div className="relative flex-1 flex flex-col h-full min-h-0 bg-white overflow-hidden select-none">
-      {/* Scrollable Chat Area */}
-      <div className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 custom-scrollbar">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {/* Top 3D Mascot & Welcome Banner */}
-          <div className="text-center pt-2 pb-4 space-y-3">
-            <motion.div
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto flex items-center justify-center"
-            >
-              <Image
-                src="/mascot.jpg"
-                alt="MarketMind AI Mascot"
-                width={96}
-                height={96}
-                className="object-contain mix-blend-multiply drop-shadow-sm"
-                priority
-              />
-            </motion.div>
+    <div className="relative flex-1 flex flex-col h-full min-h-0 bg-[#12001F] overflow-hidden select-none">
+      {/* Smooth Radial Purple Glow behind center area */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 50%, rgba(109, 0, 255, 0.42) 0%, rgba(37, 0, 68, 0.28) 45%, rgba(18, 0, 31, 1) 75%)',
+        }}
+      />
 
-            <div className="space-y-1">
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                Hi, {displayName}! 👋
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                How can I help you grow your business today?
-              </p>
-            </div>
+      {/* Subtle Star Particles */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
+        {starParticles.map((star) => (
+          <div
+            key={star.id}
+            className="star-particle"
+            style={{
+              top: star.top,
+              left: star.left,
+              width: star.size,
+              height: star.size,
+              '--duration': star.duration,
+              '--delay': star.delay,
+            } as React.CSSProperties}
+          />
+        ))}
+      </div>
 
-            {/* 4 Clickable Suggestion Cards Grid (2x2) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
-              {suggestions.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => sendMessage(item.prompt)}
-                    className="p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-purple-300 hover:shadow-md transition-all duration-200 flex items-start gap-3.5 group text-left"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 group-hover:bg-[#7C3AED] group-hover:text-white transition-colors duration-200">
-                      <Icon className="w-4 h-4 stroke-[2]" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-xs sm:text-sm text-slate-950 group-hover:text-[#7C3AED] transition-colors duration-200">
-                        {item.title}
-                      </h4>
-                      <p className="text-xs text-slate-500 leading-snug mt-0.5">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+      {/* Center Main Canvas Area */}
+      <div className="relative z-10 flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 custom-scrollbar flex flex-col justify-center">
+        <div className="max-w-3xl w-full mx-auto space-y-7 my-auto">
+          {/* Main Heading matching reference image */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              The mic is yours,{' '}
+              <span className="text-[#A855F7] bg-gradient-to-r from-[#A855F7] to-purple-300 bg-clip-text text-transparent">
+                {displayName}
+              </span>
+            </h1>
           </div>
 
-          {/* Conversation Messages */}
+          {/* Centered Chat Input Pill */}
+          <div className="w-full">
+            <ChatInput />
+          </div>
+
+          {/* Conversation Messages Stream (when active) */}
           {messages.length > 0 && (
-            <div className="space-y-5 pt-2">
+            <div className="space-y-5 pt-6 text-left border-t border-purple-900/20 max-w-2xl mx-auto">
               {messages.map((msg, index) => (
                 <MessageItem
                   key={msg.id}
@@ -122,11 +91,6 @@ export function ChatArea() {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Fixed Chat Input Composer at Bottom */}
-      <div className="border-t border-slate-100 bg-white p-3">
-        <ChatInput />
       </div>
     </div>
   );

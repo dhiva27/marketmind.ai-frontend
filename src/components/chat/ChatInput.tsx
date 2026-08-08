@@ -1,124 +1,116 @@
 'use client';
 
 import React, { useState, useRef, KeyboardEvent } from 'react';
-import { Send, Paperclip, AlertCircle } from 'lucide-react';
+import { Plus, Mic, ChevronDown, Send } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
-import { useFileUpload } from '@/hooks/useFileUpload';
-import { FilePreview } from './FilePreview';
 
 export function ChatInput() {
   const [prompt, setPrompt] = useState('');
+  const [model, setModel] = useState('Flash');
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
   const { sendMessage, isGenerating } = useChat();
-  const { attachments, error, handleFiles, removeAttachment, clearAttachments } = useFileUpload();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if ((!prompt.trim() && attachments.length === 0) || isGenerating) return;
+    if (!prompt.trim() || isGenerating) return;
 
     const currentPrompt = prompt;
-    const currentAttachments = [...attachments];
-
     setPrompt('');
-    clearAttachments();
 
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
-
-    await sendMessage(currentPrompt, currentAttachments);
+    await sendMessage(currentPrompt);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleSubmit();
     }
   };
 
-  const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrompt(e.target.value);
-    e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
-  };
-
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFiles(Array.from(e.target.files));
-    }
-  };
-
   return (
-    <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
-      {/* File Upload Error Alert */}
-      {error && (
-        <div className="mb-2 px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-medium flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {/* Main Composer Box */}
+    <div className="w-full max-w-2xl mx-auto relative px-2">
+      {/* Exact Pill Shape Chat Input Component matching reference */}
       <form
         onSubmit={handleSubmit}
-        className="relative rounded-2xl border border-slate-200/90 bg-white shadow-md p-2.5 flex items-center justify-between gap-3 focus-within:border-purple-500 focus-within:ring-1 focus-within:ring-purple-500 transition-all"
+        className="relative rounded-full border border-purple-500/20 bg-[#191020]/90 backdrop-blur-md shadow-[0_0_30px_rgba(168,85,247,0.22)] px-4 py-3 flex items-center justify-between gap-3 transition-all duration-200 focus-within:border-purple-500/40 focus-within:shadow-[0_0_35px_rgba(168,85,247,0.35)]"
       >
-        {/* Hidden file input */}
+        {/* Plus Icon on Left */}
+        <button
+          type="button"
+          onClick={() => inputRef.current?.focus()}
+          className="p-1 text-slate-300 hover:text-white transition-colors shrink-0"
+          title="Add attachment or action"
+        >
+          <Plus className="w-5 h-5 stroke-[2]" />
+        </button>
+
+        {/* Input Text Area */}
         <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          onChange={onFileChange}
-          className="hidden"
+          ref={inputRef}
+          type="text"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Ask MarketMind AI"
+          disabled={isGenerating}
+          className="w-full bg-transparent border-0 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-0 py-0.5"
         />
 
-        {/* Attachment preview area */}
-        {attachments.length > 0 && (
-          <div className="absolute -top-12 left-0 right-0 px-2 py-1 bg-white/95 rounded-xl border border-slate-200 shadow-sm backdrop-blur-xs">
-            <FilePreview attachments={attachments} onRemove={removeAttachment} />
+        {/* Right Section: Model Selector Dropdown & Microphone Icon */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Model Selector Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+              className="flex items-center gap-1 text-xs sm:text-sm font-medium text-slate-300 hover:text-white px-2 py-1 rounded-lg hover:bg-purple-900/30 transition-colors"
+            >
+              <span>{model}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </button>
+
+            {modelDropdownOpen && (
+              <div className="absolute right-0 bottom-10 w-36 bg-[#191020] border border-purple-500/30 rounded-xl shadow-xl p-1.5 z-50 text-xs text-slate-200 space-y-1">
+                {['Flash', 'Pro 2.0', 'Ultra Strategy'].map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => {
+                      setModel(m);
+                      setModelDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-purple-900/40 transition-colors ${
+                      model === m ? 'font-bold text-purple-400 bg-purple-950/50' : ''
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
 
-        <div className="flex items-center gap-2 flex-1">
-          {/* Paperclip Attachment Button */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isGenerating}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
-            title="Attach file"
-          >
-            <Paperclip className="w-4 h-4" />
-          </button>
-
-          {/* Text Area Input */}
-          <textarea
-            ref={textareaRef}
-            rows={1}
-            value={prompt}
-            onChange={handleTextareaInput}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask anything about marketing..."
-            className="w-full bg-transparent border-0 resize-none text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 max-h-36 py-1"
-            disabled={isGenerating}
-          />
+          {/* Microphone / Send Button */}
+          {prompt.trim() ? (
+            <button
+              type="submit"
+              disabled={isGenerating}
+              className="p-1.5 rounded-full bg-[#A855F7] text-white hover:bg-purple-600 transition-all hover:scale-105"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="p-1 text-slate-300 hover:text-white transition-colors"
+              title="Voice Input"
+            >
+              <Mic className="w-5 h-5 stroke-[1.75]" />
+            </button>
+          )}
         </div>
-
-        {/* Purple Circular Send Button */}
-        <button
-          type="submit"
-          disabled={(!prompt.trim() && attachments.length === 0) || isGenerating}
-          className="w-9.5 h-9.5 rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white flex items-center justify-center shrink-0 shadow-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
-        >
-          <Send className="w-4 h-4 fill-current ml-0.5" />
-        </button>
       </form>
-
-      {/* Small Disclaimer */}
-      <div className="mt-2 text-center text-[11px] text-slate-400 font-normal">
-        MarketMind AI can make mistakes. Please verify important information.
-      </div>
     </div>
   );
 }
