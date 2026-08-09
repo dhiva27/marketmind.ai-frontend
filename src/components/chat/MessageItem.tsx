@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Message } from '@/types';
 import { useAuthContext } from '@/context/AuthContext';
-import { Copy, Check, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Copy, Check, ThumbsUp, ThumbsDown, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MessageItemProps {
@@ -32,29 +32,23 @@ export function MessageItem({ message }: MessageItemProps) {
   return (
     <div
       className={cn(
-        'flex items-start gap-3 w-full select-none',
+        'flex items-start gap-3.5 w-full select-none animate-fade-in-up',
         isUser ? 'flex-row-reverse justify-start' : 'justify-start'
       )}
     >
       {/* Avatar */}
       <div className="shrink-0 mt-0.5">
         {isUser ? (
-          <div className="w-8.5 h-8.5 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white font-bold text-xs flex items-center justify-center overflow-hidden shadow-sm border border-purple-500/20">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-orange-500 to-rose-500 text-white font-bold text-xs flex items-center justify-center overflow-hidden shadow-sm border border-white/20">
             {user?.photoURL ? (
-              <Image src={user.photoURL} alt={displayName} width={34} height={34} className="object-cover" />
+              <Image src={user.photoURL} alt={displayName} width={36} height={36} className="object-cover" />
             ) : (
               <span>{displayName.charAt(0).toUpperCase()}</span>
             )}
           </div>
         ) : (
-          <div className="w-8.5 h-8.5 rounded-full bg-[#191020] border border-purple-500/30 overflow-hidden flex items-center justify-center shadow-sm">
-            <Image
-              src="/mascot.jpg"
-              alt="MarketMind AI Mascot"
-              width={34}
-              height={34}
-              className="object-contain"
-            />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7C3AED] to-[#A855F7] text-white flex items-center justify-center shadow-md">
+            <TrendingUp className="w-5 h-5 stroke-[2.5]" />
           </div>
         )}
       </div>
@@ -63,16 +57,16 @@ export function MessageItem({ message }: MessageItemProps) {
       <div className={cn('flex flex-col space-y-1', isUser ? 'items-end' : 'items-start')}>
         <div
           className={cn(
-            'p-4 text-xs sm:text-sm leading-relaxed transition-all shadow-md',
+            'p-4.5 text-[15px] sm:text-[16px] leading-relaxed transition-all shadow-md',
             isUser
-              ? 'bg-[#7C3AED] text-white border border-purple-400/30 rounded-2xl rounded-tr-xs max-w-md sm:max-w-lg font-medium'
-              : 'bg-[#191020]/90 text-slate-100 border border-purple-500/20 rounded-2xl rounded-tl-xs max-w-xl sm:max-w-2xl space-y-2 backdrop-blur-xs'
+              ? 'bg-[#7C3AED] text-white border border-[#A855F7]/30 rounded-2xl rounded-tr-xs max-w-md sm:max-w-lg font-medium'
+              : 'bg-[rgba(20,8,30,0.85)] text-slate-100 border border-[#A855F7]/20 rounded-2xl rounded-tl-xs max-w-xl sm:max-w-2xl space-y-2 backdrop-blur-md'
           )}
         >
           {isUser ? (
             <p className="whitespace-pre-wrap">{message.content}</p>
           ) : (
-            <div className="space-y-2 text-slate-200">
+            <div className="space-y-2 text.slate-200">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -80,13 +74,13 @@ export function MessageItem({ message }: MessageItemProps) {
                     return <strong className="font-bold text-white">{children}</strong>;
                   },
                   ul({ children }) {
-                    return <ul className="list-disc list-inside space-y-1 my-1 text-slate-300">{children}</ul>;
+                    return <ul className="list-disc list-inside space-y-1.5 my-1.5 text-slate-300">{children}</ul>;
                   },
                   ol({ children }) {
-                    return <ol className="list-decimal list-inside space-y-1 my-1 text-slate-300">{children}</ol>;
+                    return <ol className="list-decimal list-inside space-y-1.5 my-1.5 text-slate-300">{children}</ol>;
                   },
                   p({ children }) {
-                    return <p className="mb-1.5 last:mb-0 leading-relaxed">{children}</p>;
+                    return <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>;
                   },
                 }}
               >
@@ -94,13 +88,13 @@ export function MessageItem({ message }: MessageItemProps) {
               </ReactMarkdown>
 
               {message.isStreaming && (
-                <span className="inline-block w-1.5 h-3.5 bg-purple-400 animate-pulse ml-1 align-middle rounded-xs" />
+                <span className="inline-block w-1.5 h-4 bg-[#A855F7] animate-pulse ml-1 align-middle rounded-xs" />
               )}
 
               {/* Action Toolbar below AI response */}
               {!isUser && !message.isStreaming && (
-                <div className="flex items-center justify-between pt-2 border-t border-purple-900/30 text-slate-400 text-[11px]">
-                  <span className="text-[10px] text-slate-500 font-medium">{message.timestamp}</span>
+                <div className="flex items-center justify-between pt-2.5 border-t border-purple-900/30 text-[#B8AFC4] text-xs">
+                  <span className="text-xs text-[#81758F] font-medium">{message.timestamp}</span>
 
                   <div className="flex items-center gap-2">
                     <button
@@ -114,7 +108,7 @@ export function MessageItem({ message }: MessageItemProps) {
                       onClick={() => setLiked(liked === true ? null : true)}
                       className={cn(
                         'p-1 rounded-md hover:bg-purple-900/40 transition-colors',
-                        liked === true ? 'text-purple-400' : 'hover:text-white'
+                        liked === true ? 'text-[#A855F7]' : 'hover:text-white'
                       )}
                       title="Good response"
                     >
@@ -139,7 +133,7 @@ export function MessageItem({ message }: MessageItemProps) {
 
         {/* Timestamp for User message */}
         {isUser && (
-          <span className="text-[10px] text-slate-400 font-medium px-1">
+          <span className="text-xs text-[#81758F] font-medium px-1">
             {message.timestamp}
           </span>
         )}

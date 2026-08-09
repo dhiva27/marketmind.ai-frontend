@@ -9,21 +9,25 @@ html {
 }
 
 :root {
-  --background: #100019;
+  --background: #100018;
   --foreground: #FFFFFF;
-  --card: #17101F;
+  --card: rgba(20, 8, 30, 0.85);
   --card-foreground: #FFFFFF;
-  --primary: #A855F7;
-  --primary-foreground: #FFFFFF;
-  --secondary: #1B0030;
-  --secondary-foreground: #B8AEC5;
-  --border: rgba(168, 85, 247, 0.25);
+  --primary: #8B3DFF;
+  --primary-bright: #A855F7;
+  --primary-deep: #4C1D95;
+  --secondary: #14001F;
+  --secondary-foreground: #B8AFC4;
+  --muted-text: #81758F;
+  --border: rgba(168, 85, 247, 0.18);
+  --input-bg: rgba(20, 8, 30, 0.85);
+  --purple-glow: rgba(139, 61, 255, 0.35);
 }
 
 body {
-  background-color: #100019;
+  background-color: #100018;
   color: #FFFFFF;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: Inter, Geist, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
 }
 
@@ -38,19 +42,19 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(168, 85, 247, 0.3);
+  background: rgba(168, 85, 247, 0.25);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 85, 247, 0.6);
+  background: rgba(168, 85, 247, 0.5);
 }
 
 /* Smooth Fade In / Slide Animations */
 @keyframes fadeInSlideUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -69,24 +73,24 @@ body {
     opacity: 0.85;
   }
   50% {
-    transform: scale(1.06);
+    transform: scale(1.05);
     opacity: 1;
   }
 }
 
 .animate-pulse-glow {
-  animation: pulseGlow 8s ease-in-out infinite;
+  animation: pulseGlow 7s ease-in-out infinite;
 }
 
 /* Very Slow Floating Star Particles */
 @keyframes floatParticle {
   0%, 100% {
-    opacity: 0.15;
+    opacity: 0.12;
     transform: translateY(0) scale(0.9);
   }
   50% {
-    opacity: 0.85;
-    transform: translateY(-8px) scale(1.15);
+    opacity: 0.75;
+    transform: translateY(-6px) scale(1.1);
   }
 }
 
