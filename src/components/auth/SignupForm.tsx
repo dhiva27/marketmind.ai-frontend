@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/context/AuthContext';
 import { User as UserIcon, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { formatFirebaseError } from '@/utils/firebaseErrors';
 
 export function SignupForm() {
   const router = useRouter();
@@ -40,9 +40,8 @@ export function SignupForm() {
     try {
       await signup(name, email, password);
       router.push('/chat');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(formatFirebaseError(err));
     }
   };
 
@@ -51,9 +50,8 @@ export function SignupForm() {
       setError('');
       await loginWithGoogle();
       router.push('/chat');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Google sign-in failed.';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(formatFirebaseError(err));
     }
   };
 
@@ -62,9 +60,8 @@ export function SignupForm() {
       setError('');
       await loginWithGithub();
       router.push('/chat');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'GitHub sign-in failed.';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(formatFirebaseError(err));
     }
   };
 

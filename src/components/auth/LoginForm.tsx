@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/context/AuthContext';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { formatFirebaseError } from '@/utils/firebaseErrors';
 
 export function LoginForm() {
   const router = useRouter();
@@ -27,9 +28,8 @@ export function LoginForm() {
     try {
       await login(email, password);
       router.push('/chat');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Invalid email or password.';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(formatFirebaseError(err));
     }
   };
 
@@ -38,9 +38,8 @@ export function LoginForm() {
       setError('');
       await loginWithGoogle();
       router.push('/chat');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Google sign-in failed.';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(formatFirebaseError(err));
     }
   };
 
@@ -49,9 +48,8 @@ export function LoginForm() {
       setError('');
       await loginWithGithub();
       router.push('/chat');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'GitHub sign-in failed.';
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(formatFirebaseError(err));
     }
   };
 
