@@ -59,10 +59,9 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-14 sm:w-16 bg-[#0E031A] border-r border-purple-900/20 flex flex-col justify-between items-center py-5 select-none z-40 shrink-0 h-full">
-      {/* Top Vertical Icon Stack (NO LOGO AT ALL AT TOP-LEFT) */}
+    <aside className="w-14 sm:w-16 bg-[#0B0014] border-r border-purple-900/20 flex flex-col justify-between items-center py-5 select-none z-40 shrink-0 h-full">
+      {/* Top Vertical Icon Stack (NO GEMINI LOGO AT TOP-LEFT) */}
       <div className="flex flex-col items-center space-y-6 pt-2">
-        {/* Navigation Icon List */}
         <div className="flex flex-col items-center space-y-5">
           {navIcons.map((item, idx) => {
             const Icon = item.icon;
@@ -71,7 +70,7 @@ export function Sidebar() {
                 key={idx}
                 onClick={item.action}
                 title={item.label}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-purple-900/30 transition-all duration-200"
+                className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-purple-900/30 transition-all duration-200"
               >
                 <Icon className="w-5 h-5 stroke-[1.75]" />
               </button>
@@ -80,16 +79,16 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Bottom Settings & User Avatar Stack */}
+      {/* Bottom Settings Icon & Dynamic User Avatar */}
       <div className="flex flex-col items-center space-y-4 relative" ref={menuRef}>
-        {/* Settings Icon with small blue indicator dot */}
+        {/* Settings Icon */}
         <Link
           href="/settings"
           title="Settings"
-          className="relative p-2 rounded-xl text-slate-400 hover:text-white hover:bg-purple-900/30 transition-all duration-200"
+          className="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-purple-900/30 transition-all duration-200"
         >
           <Settings className="w-5 h-5 stroke-[1.75]" />
-          <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-500 border border-[#0E031A]" />
+          <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-500 border border-[#0B0014]" />
         </Link>
 
         {/* Circular User Avatar Trigger */}
@@ -105,10 +104,9 @@ export function Sidebar() {
           )}
         </button>
 
-        {/* User Profile Floating Menu */}
+        {/* Profile Floating Menu */}
         {profileMenuOpen && (
-          <div className="absolute bottom-2 left-16 w-64 bg-[#191020] rounded-2xl p-3.5 shadow-2xl border border-purple-500/30 z-50 animate-fade-in space-y-3 text-white">
-            {/* Header Info */}
+          <div className="absolute bottom-2 left-16 w-64 bg-[#17101F] rounded-2xl p-3.5 shadow-2xl border border-purple-500/30 z-50 animate-fade-in-up space-y-3 text-white">
             <div className="flex items-center justify-between pb-3 border-b border-purple-900/30">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white text-sm font-bold shrink-0 overflow-hidden">
@@ -120,7 +118,7 @@ export function Sidebar() {
                 </div>
                 <div className="min-w-0">
                   <div className="font-bold text-sm text-white truncate">{displayName}</div>
-                  <div className="text-xs text-slate-400 truncate">{email}</div>
+                  <div className="text-xs text-[#B8AEC5] truncate">{email}</div>
                 </div>
               </div>
               <Link href="/profile" onClick={() => setProfileMenuOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-purple-900/40">
@@ -128,14 +126,13 @@ export function Sidebar() {
               </Link>
             </div>
 
-            {/* Links */}
             <div className="space-y-1 text-sm font-semibold text-slate-300">
               <Link
                 href="/profile"
                 onClick={() => setProfileMenuOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-purple-950/60 hover:text-white transition-colors"
               >
-                <UserIcon className="w-4 h-4 text-purple-400" />
+                <UserIcon className="w-4 h-4 text-[#A855F7]" />
                 <span>My Profile</span>
               </Link>
               <Link
@@ -143,7 +140,7 @@ export function Sidebar() {
                 onClick={() => setProfileMenuOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-purple-950/60 hover:text-white transition-colors"
               >
-                <Settings className="w-4 h-4 text-purple-400" />
+                <Settings className="w-4 h-4 text-[#A855F7]" />
                 <span>Settings</span>
               </Link>
               <a
@@ -151,7 +148,7 @@ export function Sidebar() {
                 onClick={() => setProfileMenuOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-purple-950/60 hover:text-white transition-colors"
               >
-                <HelpCircle className="w-4 h-4 text-purple-400" />
+                <HelpCircle className="w-4 h-4 text-[#A855F7]" />
                 <span>Help & Support</span>
               </a>
             </div>

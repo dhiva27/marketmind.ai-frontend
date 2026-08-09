@@ -21,69 +21,10 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const INITIAL_CHATS: Chat[] = [
-  {
-    id: 'chat_1',
-    title: 'Marketing strategy for...',
-    createdAt: new Date(Date.now() - 120000).toISOString(),
-    updatedAt: new Date(Date.now() - 120000).toISOString(),
-    messagesCount: 2,
-    lastMessageSnippet: 'Create a marketing strategy for my AI SaaS product',
-  },
-  {
-    id: 'chat_2',
-    title: 'Best SEO keywords...',
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000).toISOString(),
-    messagesCount: 2,
-    lastMessageSnippet: 'Top keywords for AI marketing tools...',
-  },
-  {
-    id: 'chat_3',
-    title: 'Competitor analysis...',
-    createdAt: new Date(Date.now() - 3600000 * 3).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 3).toISOString(),
-    messagesCount: 2,
-    lastMessageSnippet: 'Competitor SWOT breakdown...',
-  },
-];
-
-const INITIAL_MESSAGES: Record<string, Message[]> = {
-  chat_1: [
-    {
-      id: 'msg_1',
-      chatId: 'chat_1',
-      sender: 'user',
-      content: 'Create a marketing strategy for my AI SaaS product',
-      timestamp: '10:30 AM',
-    },
-    {
-      id: 'msg_2',
-      chatId: 'chat_1',
-      sender: 'assistant',
-      content: `Here's a comprehensive marketing strategy for your AI SaaS product:
-
-**1. Product Positioning**
-Position your AI SaaS as an all-in-one growth solution that helps businesses automate marketing workflows and increase revenue.
-
-**2. Target Audience**
-• High-growth tech startups & SaaS founders
-• In-house marketing teams looking to scale production
-• E-commerce brands & digital agencies
-
-**3. Key Distribution Channels**
-• Organic Search (SEO) & thought-leadership articles
-• Targeted Meta & Google Search campaigns
-• Product-Led Growth (PLG) with fast time-to-value free trial`,
-      timestamp: '10:31 AM',
-    },
-  ],
-};
-
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const [chats, setChats] = useState<Chat[]>(INITIAL_CHATS);
-  const [activeChatId, setActiveChatId] = useState<string | null>('chat_1');
-  const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>(INITIAL_MESSAGES);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -92,7 +33,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const savedChats = localStorage.getItem('marketmind_chats');
     if (savedChats) {
       try {
-        setChats(JSON.parse(savedChats));
+        const parsed = JSON.parse(savedChats);
+        setChats(parsed);
+        if (parsed.length > 0) {
+          setActiveChatId(parsed[0].id);
+        }
       } catch {
         // Fallback
       }

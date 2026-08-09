@@ -29,11 +29,11 @@ export function ChatInput() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto relative">
-      {/* Exact Pill Shape Chat Input Bar matching reference screenshot */}
+    <div className="w-full max-w-2xl mx-auto relative px-2">
+      {/* Pill Shape Input Bar matching second reference image */}
       <form
         onSubmit={handleSubmit}
-        className="relative rounded-full border border-purple-500/30 bg-[#180E24]/95 backdrop-blur-md shadow-[0_0_35px_rgba(109,0,255,0.28)] px-5 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 focus-within:border-purple-500/50 focus-within:shadow-[0_0_40px_rgba(109,0,255,0.4)]"
+        className="relative rounded-full border border-purple-500/25 bg-[#17101F]/95 backdrop-blur-md shadow-[0_0_35px_rgba(109,0,255,0.3)] px-5 py-3.5 flex items-center justify-between gap-3 transition-all duration-300 focus-within:border-purple-500/50 focus-within:shadow-[0_0_45px_rgba(109,0,255,0.45)]"
       >
         {/* Plus Icon on Left */}
         <button
@@ -54,7 +54,7 @@ export function ChatInput() {
           onKeyDown={handleKeyDown}
           placeholder="Ask MarketMind AI"
           disabled={isGenerating}
-          className="w-full bg-transparent border-0 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-0 py-0.5"
+          className="w-full bg-transparent border-0 text-sm sm:text-base text-white placeholder-[#B8AEC5] focus:outline-none focus:ring-0 py-0.5"
         />
 
         {/* Right Section: Model Selector Dropdown & Microphone Icon */}
@@ -64,14 +64,14 @@ export function ChatInput() {
             <button
               type="button"
               onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-normal text-slate-300 hover:text-white px-2 py-1 rounded-lg hover:bg-purple-900/30 transition-colors"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-300 hover:text-white px-2 py-1 rounded-lg hover:bg-purple-900/30 transition-colors"
             >
               <span>{model}</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {modelDropdownOpen && (
-              <div className="absolute right-0 bottom-10 w-36 bg-[#180E24] border border-purple-500/30 rounded-xl shadow-2xl p-1.5 z-50 text-xs text-slate-200 space-y-1">
+              <div className="absolute right-0 bottom-10 w-36 bg-[#17101F] border border-purple-500/30 rounded-xl shadow-2xl p-1.5 z-50 text-xs text-slate-200 space-y-1">
                 {['Flash', 'Pro 2.0', 'Ultra Strategy'].map((m) => (
                   <button
                     key={m}
@@ -81,7 +81,7 @@ export function ChatInput() {
                       setModelDropdownOpen(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-purple-900/40 transition-colors ${
-                      model === m ? 'font-bold text-purple-400 bg-purple-950/60' : ''
+                      model === m ? 'font-bold text-[#A855F7] bg-purple-950/60' : ''
                     }`}
                   >
                     {m}

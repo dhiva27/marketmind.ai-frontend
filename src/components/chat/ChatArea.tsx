@@ -11,37 +11,37 @@ export function ChatArea() {
   const { user } = useAuthContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Dynamic user name from authenticated Firebase user
+  // Dynamic username from authenticated user's account
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Generate background star particles matching reference image
-  const starParticles = Array.from({ length: 45 }).map((_, i) => ({
+  // Sparse, tiny, elegant star particles
+  const starParticles = Array.from({ length: 32 }).map((_, i) => ({
     id: i,
-    top: `${(i * 13) % 96}%`,
-    left: `${(i * 29) % 96}%`,
-    size: `${(i % 3) * 0.8 + 1.2}px`,
-    duration: `${2.5 + (i % 4) * 0.8}s`,
-    delay: `${(i % 6) * 0.4}s`,
+    top: `${(i * 19) % 95}%`,
+    left: `${(i * 31) % 95}%`,
+    size: `${(i % 3) * 0.7 + 1.2}px`,
+    duration: `${6 + (i % 5) * 1.2}s`,
+    delay: `${(i % 4) * 0.8}s`,
   }));
 
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="relative flex-1 flex flex-col h-full min-h-0 bg-[#12001F] overflow-hidden select-none">
-      {/* Exact Elliptical Radial Purple Glow behind center chatbot area */}
+    <div className="relative flex-1 flex flex-col h-full min-h-0 bg-[#100019] overflow-hidden select-none">
+      {/* Large Soft Radial Purple Glow with Breathing Pulse Animation */}
       <div
-        className="absolute inset-0 pointer-events-none z-0"
+        className="absolute inset-0 pointer-events-none z-0 animate-pulse-glow"
         style={{
           background:
-            'radial-gradient(ellipse 68% 48% at 50% 50%, rgba(109, 0, 255, 0.48) 0%, rgba(37, 0, 68, 0.32) 42%, rgba(18, 0, 31, 1) 78%)',
+            'radial-gradient(ellipse 70% 50% at 50% 48%, rgba(139, 44, 255, 0.45) 0%, rgba(109, 0, 255, 0.38) 25%, rgba(53, 0, 107, 0.3) 48%, rgba(27, 0, 48, 0.2) 68%, rgba(16, 0, 25: 1) 85%)',
         }}
       />
 
-      {/* Subtle Small Purple/White Star Particles */}
+      {/* Subtle Tiny Star Particles */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-50">
         {starParticles.map((star) => (
           <div
@@ -59,27 +59,30 @@ export function ChatArea() {
         ))}
       </div>
 
-      {/* Center Main Canvas Area */}
+      {/* Main Canvas Area */}
       <div className="relative z-10 flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 custom-scrollbar flex flex-col justify-center">
-        <div className="max-w-3xl w-full mx-auto space-y-8 my-auto">
-          {/* Main Heading matching reference typography */}
-          <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-normal text-white tracking-normal leading-tight">
-              The mic is yours,{' '}
-              <span className="text-[#A855F7] font-normal">
-                {displayName}
-              </span>
-            </h1>
-          </div>
+        {!hasMessages ? (
+          /* EMPTY CHATBOT STATE matching Second Reference Image */
+          <div className="max-w-3xl w-full mx-auto space-y-8 my-auto text-center animate-fade-in-up">
+            {/* Dynamic Heading */}
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#FFFFFF] tracking-normal leading-tight">
+                The mic is yours,{' '}
+                <span className="text-[#A855F7] font-medium">
+                  {displayName}
+                </span>
+              </h1>
+            </div>
 
-          {/* Centered Pill Input Bar */}
-          <div className="w-full">
-            <ChatInput />
+            {/* Pill Chat Input */}
+            <div className="w-full">
+              <ChatInput />
+            </div>
           </div>
-
-          {/* Conversation Messages Stream */}
-          {hasMessages && (
-            <div className="space-y-5 pt-6 text-left border-t border-purple-900/30 max-w-2xl mx-auto">
+        ) : (
+          /* ACTIVE CONVERSATION VIEW */
+          <div className="max-w-3xl w-full mx-auto space-y-6 my-auto pt-4">
+            <div className="space-y-5 text-left max-w-2xl mx-auto">
               {messages.map((msg, index) => (
                 <MessageItem
                   key={msg.id}
@@ -91,8 +94,13 @@ export function ChatArea() {
               ))}
               <div ref={messagesEndRef} className="h-2" />
             </div>
-          )}
-        </div>
+
+            {/* Composer at Bottom of Active Conversation */}
+            <div className="pt-4 border-t border-purple-900/30">
+              <ChatInput />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

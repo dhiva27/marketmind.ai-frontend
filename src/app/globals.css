@@ -9,18 +9,20 @@ html {
 }
 
 :root {
-  --background: #12001F;
-  --foreground: #ffffff;
-  --card: #191020;
-  --card-foreground: #ffffff;
+  --background: #100019;
+  --foreground: #FFFFFF;
+  --card: #17101F;
+  --card-foreground: #FFFFFF;
   --primary: #A855F7;
-  --primary-foreground: #ffffff;
-  --border: rgba(168, 85, 247, 0.2);
+  --primary-foreground: #FFFFFF;
+  --secondary: #1B0030;
+  --secondary-foreground: #B8AEC5;
+  --border: rgba(168, 85, 247, 0.25);
 }
 
 body {
-  background-color: #12001F;
-  color: #ffffff;
+  background-color: #100019;
+  color: #FFFFFF;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   overflow-x: hidden;
 }
@@ -44,25 +46,54 @@ body {
   background: rgba(168, 85, 247, 0.6);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Smooth Fade In / Slide Animations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out forwards;
+.animate-fade-in-up {
+  animation: fadeInSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Star Particles Background Animation */
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 0.9; transform: scale(1.2); }
+/* Subtle Slow Breathing / Pulsing Radial Purple Glow */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 8s ease-in-out infinite;
+}
+
+/* Very Slow Floating Star Particles */
+@keyframes floatParticle {
+  0%, 100% {
+    opacity: 0.15;
+    transform: translateY(0) scale(0.9);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateY(-8px) scale(1.15);
+  }
 }
 
 .star-particle {
   position: absolute;
   border-radius: 50%;
-  background: #ffffff;
+  background: #FFFFFF;
   pointer-events: none;
-  animation: twinkle var(--duration, 3s) infinite ease-in-out var(--delay, 0s);
+  animation: floatParticle var(--duration, 7s) ease-in-out infinite var(--delay, 0s);
 }
