@@ -3,8 +3,7 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Firebase web config — these are public values (not secrets).
-// Firebase security is enforced via Firebase Security Rules, not by hiding this config.
+// Official Firebase configuration for MarketMind AI (v7.20.0+)
 const firebaseConfig = {
   apiKey: "AIzaSyDRJdbqJsBKA3Li-SKgbTvsGGdDnnZPDHw",
   authDomain: "marketmindai-f6162.firebaseapp.com",
@@ -15,26 +14,30 @@ const firebaseConfig = {
   measurementId: "G-VEV1XRHDX2"
 };
 
-// Initialize Firebase App (singleton-safe)
+// Initialize Firebase (Next.js SSR singleton safe)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Auth & Firestore exports
+// Auth & Firestore services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Google provider — force account chooser
+// Authentication Providers
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
-// GitHub provider
 export const githubProvider = new GithubAuthProvider();
 
-// SSR-Safe Analytics
+// SSR-Safe Analytics Initialization
 export const initAnalytics = async () => {
   if (typeof window !== "undefined" && (await isSupported())) {
     return getAnalytics(app);
   }
   return null;
 };
+
+// Auto-trigger Analytics on client load
+if (typeof window !== "undefined") {
+  initAnalytics().catch(() => {});
+}
 
 export default app;
