@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Chat, Message, Attachment } from '@/types';
+import { chatService } from '@/services/chatService';
 
 interface ChatContextType {
   chats: Chat[];
@@ -9,14 +10,21 @@ interface ChatContextType {
   messages: Message[];
   isGenerating: boolean;
   sidebarOpen: boolean;
+  sidebarExpanded: boolean;
+  historyDrawerOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  setSidebarExpanded: (expanded: boolean) => void;
+  setHistoryDrawerOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  toggleSidebarExpand: () => void;
+  toggleHistoryDrawer: () => void;
   setActiveChatId: (id: string | null) => void;
   createNewChat: () => string;
   sendMessage: (content: string, attachments?: Attachment[]) => Promise<void>;
   regenerateLastResponse: () => Promise<void>;
-  renameChat: (id: string, newTitle: string) => void;
-  deleteChat: (id: string) => void;
+  renameChat: (id: string, newTitle: string) => Promise<void>;
+  deleteChat: (id: string) => Promise<void>;
+  refreshHistory: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -27,22 +35,77 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false);
 
-  // Sync with local storage
   useEffect(() => {
+    const saved = localStorage.getItem('mm_sidebar_expanded');
+    if (saved !== null) {
+      setSidebarExpanded(saved === 'true');
+    }
+  }, []);
+
+  const handleSetSidebarExpanded = (expanded: boolean) => {
+    setSidebarExpanded(expanded);
+    localStorage.setItem('mm_sidebar_expanded', String(expanded));
+  };
+
+  const toggleSidebarExpand = () => {
+    handleSetSidebarExpanded(!sidebarExpanded);
+  };
+
+  // Load chat history from backend or localStorage on mount
+  const refreshHistory = async () => {
+    try {
+      const history = await chatService.getHistory();
+      if (history && history.length > 0) {
+        setChats(history);
+        if (!activeChatId) {
+          setActiveChatId(history[0].id);
+        }
+        localStorage.setItem('marketmind_chats', JSON.stringify(history));
+        return;
+      }
+    } catch (err) {
+      console.warn('Backend history fetch failed, reading local storage:', err);
+    }
+
+    // Fallback to local storage
     const savedChats = localStorage.getItem('marketmind_chats');
     if (savedChats) {
       try {
         const parsed = JSON.parse(savedChats);
         setChats(parsed);
-        if (parsed.length > 0) {
+        if (parsed.length > 0 && !activeChatId) {
           setActiveChatId(parsed[0].id);
         }
       } catch {
         // Fallback
       }
     }
+  };
+
+  useEffect(() => {
+    refreshHistory();
   }, []);
+
+  // Fetch messages for active chat when switched
+  useEffect(() => {
+    if (!activeChatId) return;
+
+    if (!messagesMap[activeChatId] || messagesMap[activeChatId].length === 0) {
+      chatService
+        .getMessages(activeChatId)
+        .then((fetchedMsgs) => {
+          if (fetchedMsgs && fetchedMsgs.length > 0) {
+            setMessagesMap((prev) => ({ ...prev, [activeChatId]: fetchedMsgs }));
+          }
+        })
+        .catch((err) => {
+          console.warn(`Could not load backend messages for chat ${activeChatId}:`, err);
+        });
+    }
+  }, [activeChatId]);
 
   const saveChatsToStorage = (updated: Chat[]) => {
     setChats(updated);
@@ -50,6 +113,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+  const toggleHistoryDrawer = () => setHistoryDrawerOpen((prev) => !prev);
 
   const createNewChat = (): string => {
     const newId = `chat_${Date.now()}`;
@@ -67,9 +131,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     return newId;
   };
 
-  const currentMessages = activeChatId ? (messagesMap[activeChatId] || []) : [];
+  const currentMessages = activeChatId ? messagesMap[activeChatId] || [] : [];
 
   const sendMessage = async (content: string, attachments?: Attachment[]) => {
+    if (!content || !content.trim()) return;
+
     let targetChatId = activeChatId;
     if (!targetChatId) {
       targetChatId = createNewChat();
@@ -81,7 +147,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       id: `msg_${Date.now()}`,
       chatId: targetChatId,
       sender: 'user',
-      content,
+      content: content.trim(),
       timestamp: timeStr,
       attachments,
     };
@@ -94,7 +160,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setChats((prev) =>
       prev.map((c) => {
         if (c.id === targetChatId) {
-          const title = c.title === 'New Conversation' ? (content.slice(0, 24) + '...') : c.title;
+          const title = c.title === 'New Conversation' ? (content.length > 30 ? content.slice(0, 30) + '...' : content) : c.title;
           return { ...c, title, updatedAt: new Date().toISOString(), lastMessageSnippet: content };
         }
         return c;
@@ -118,61 +184,56 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       [targetChatId!]: [...(prev[targetChatId!] || []), assistantMsg],
     }));
 
-    // Call Google Gemini API via environment variable
-    const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
     let fullResponseText = '';
 
-    if (geminiApiKey) {
-      try {
-        const systemPrompt = "You are MarketMind AI, a world-class AI marketing strategist and growth advisor. Provide ultra-structured, highly actionable, concise marketing strategies, campaign ideas, copy advice, and competitive insights.";
-        
-        const payload = {
-          system_instruction: {
-            parts: [{ text: systemPrompt }],
-          },
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: content }],
-            },
-          ],
-        };
-
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiApiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          }
+    // Step 1: Attempt backend Express API call first if configured
+    try {
+      const response = await chatService.sendMessage(targetChatId, content);
+      fullResponseText = response.aiMessage.content;
+      if (response.chatSession?.title) {
+        setChats((prev) =>
+          prev.map((c) => (c.id === targetChatId ? { ...c, title: response.chatSession.title } : c))
         );
+      }
+    } catch (expressError) {
+      // Step 2: Fallback to Next.js Server Route Handler (Vercel Serverless Function)
+      try {
+        const historyForServer = (messagesMap[targetChatId] || []).concat(userMsg);
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: content.trim(),
+            messages: historyForServer,
+          }),
+        });
 
         const data = await res.json();
-        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-          fullResponseText = data.candidates[0].content.parts[0].text;
-        } else {
-          throw new Error('Invalid Gemini API response');
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || `Server responded with status ${res.status}`);
         }
-      } catch {
-        fullResponseText = `Here is an actionable marketing strategy breakdown for "${content.slice(0, 40)}":\n\n**1. Strategic Messaging & Positioning**\n• Highlight direct ROI, automated efficiency, and time savings.\n• Focus on solving specific pain points for your target ICP.\n\n**2. Key Marketing Channels**\n• Organic Search (SEO) and high-value industry guides\n• Targeted Google Search ads & Meta social retargeting\n• Community outreach and founder-led marketing on LinkedIn & Twitter.`;
+
+        fullResponseText = data.text;
+      } catch (serverErr: any) {
+        console.error('Server side Gemini execution error:', serverErr);
+        fullResponseText = `⚠️ **Connection Error**\n\n${
+          serverErr.message || 'Failed to generate response from Gemini AI. Please check your Vercel environment variables or internet connection.'
+        }`;
       }
-    } else {
-      fullResponseText = `Here is an actionable marketing strategy breakdown for "${content.slice(0, 40)}":\n\n**1. Strategic Messaging & Positioning**\n• Highlight direct ROI, automated efficiency, and time savings.\n• Focus on solving specific pain points for your target ICP.\n\n**2. Key Marketing Channels**\n• Organic Search (SEO) and high-value industry guides\n• Targeted Google Search ads & Meta social retargeting\n• Community outreach and founder-led marketing on LinkedIn & Twitter.`;
     }
 
     // Stream text into UI smoothly
     let index = 0;
     const interval = setInterval(() => {
-      index += 5;
+      index += 6;
       const currentChunk = fullResponseText.slice(0, index);
 
       setMessagesMap((prev) => {
         const list = prev[targetChatId!] || [];
         return {
           ...prev,
-          [targetChatId!]: list.map((m) =>
-            m.id === assistantMsgId ? { ...m, content: currentChunk } : m
-          ),
+          [targetChatId!]: list.map((m) => (m.id === assistantMsgId ? { ...m, content: currentChunk } : m)),
         };
       });
 
@@ -183,13 +244,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           const list = prev[targetChatId!] || [];
           return {
             ...prev,
-            [targetChatId!]: list.map((m) =>
-              m.id === assistantMsgId ? { ...m, isStreaming: false } : m
-            ),
+            [targetChatId!]: list.map((m) => (m.id === assistantMsgId ? { ...m, isStreaming: false } : m)),
           };
         });
       }
-    }, 15);
+    }, 12);
   };
 
   const regenerateLastResponse = async () => {
@@ -209,12 +268,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     await sendMessage(lastUserMsg.content, lastUserMsg.attachments);
   };
 
-  const renameChat = (id: string, newTitle: string) => {
+  const renameChat = async (id: string, newTitle: string) => {
     const updated = chats.map((c) => (c.id === id ? { ...c, title: newTitle } : c));
     saveChatsToStorage(updated);
+    try {
+      await chatService.renameChat(id, newTitle);
+    } catch (err) {
+      console.warn('Backend rename failed:', err);
+    }
   };
 
-  const deleteChat = (id: string) => {
+  const deleteChat = async (id: string) => {
     const updated = chats.filter((c) => c.id !== id);
     saveChatsToStorage(updated);
     setMessagesMap((prev) => {
@@ -224,6 +288,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     });
     if (activeChatId === id) {
       setActiveChatId(updated[0]?.id || null);
+    }
+    try {
+      await chatService.deleteChat(id);
+    } catch (err) {
+      console.warn('Backend delete chat failed:', err);
     }
   };
 
@@ -235,14 +304,21 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         messages: currentMessages,
         isGenerating,
         sidebarOpen,
+        sidebarExpanded,
+        historyDrawerOpen,
         setSidebarOpen,
+        setSidebarExpanded: handleSetSidebarExpanded,
+        setHistoryDrawerOpen,
         toggleSidebar,
+        toggleSidebarExpand,
+        toggleHistoryDrawer,
         setActiveChatId,
         createNewChat,
         sendMessage,
         regenerateLastResponse,
         renameChat,
         deleteChat,
+        refreshHistory,
       }}
     >
       {children}

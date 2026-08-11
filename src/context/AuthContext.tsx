@@ -68,16 +68,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithGoogle = async () => {
     setLoading(true);
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-    setLoading(false);
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+        const { signInWithRedirect } = await import('firebase/auth');
+        const provider = new GoogleAuthProvider();
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw error;
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loginWithGithub = async () => {
     setLoading(true);
-    const provider = new GithubAuthProvider();
-    await signInWithPopup(auth, provider);
-    setLoading(false);
+    try {
+      const provider = new GithubAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+        const { signInWithRedirect } = await import('firebase/auth');
+        const provider = new GithubAuthProvider();
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw error;
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = async () => {

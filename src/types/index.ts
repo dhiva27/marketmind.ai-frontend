@@ -30,7 +30,7 @@ export interface Chat {
   title: string;
   createdAt: string;
   updatedAt: string;
-  messagesCount: number;
+  messagesCount?: number;
   lastMessageSnippet?: string;
 }
 

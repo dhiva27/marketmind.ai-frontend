@@ -13,15 +13,17 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-VEV1XRHDX2"
 };
 
-// Initialize Firebase App
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Initialize Firebase App safely
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Auth & Firestore DB Exports
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Auth Providers
+// Configure Auth Providers with custom parameters to ensure authorized domain handling
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+
 export const githubProvider = new GithubAuthProvider();
 
 // SSR-Safe Analytics Initialization

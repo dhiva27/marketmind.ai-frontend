@@ -10,16 +10,17 @@ import { cn } from '@/lib/utils';
 interface ChatHistoryItemProps {
   chat: Chat;
   isActive: boolean;
+  onSelect?: () => void;
 }
 
-export function ChatHistoryItem({ chat, isActive }: ChatHistoryItemProps) {
+export function ChatHistoryItem({ chat, isActive, onSelect }: ChatHistoryItemProps) {
   const { setActiveChatId, renameChat, deleteChat } = useChat();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(chat.title);
 
-  const handleSaveRename = () => {
+  const handleSaveRename = async () => {
     if (editTitle.trim() && editTitle !== chat.title) {
-      renameChat(chat.id, editTitle.trim());
+      await renameChat(chat.id, editTitle.trim());
     }
     setIsEditing(false);
   };
@@ -32,7 +33,7 @@ export function ChatHistoryItem({ chat, isActive }: ChatHistoryItemProps) {
     },
     {
       label: 'Delete',
-      icon: <Trash2 className="w-3.5 h-3.5" />,
+      icon: <Trash2 className="w-3.5 h-3.5 text-rose-400" />,
       onClick: () => deleteChat(chat.id),
       danger: true,
     },
@@ -40,16 +41,21 @@ export function ChatHistoryItem({ chat, isActive }: ChatHistoryItemProps) {
 
   return (
     <div
-      onClick={() => !isEditing && setActiveChatId(chat.id)}
+      onClick={() => {
+        if (!isEditing) {
+          setActiveChatId(chat.id);
+          if (onSelect) onSelect();
+        }
+      }}
       className={cn(
-        'group relative flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-medium cursor-pointer transition-all',
+        'group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-medium cursor-pointer transition-all border',
         isActive
-          ? 'bg-indigo-500/10 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 font-semibold'
-          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
+          ? 'bg-[#8B3DFF]/25 border-[#A855F7]/40 text-white font-semibold shadow-[0_0_12px_rgba(168,85,247,0.2)]'
+          : 'border-transparent text-[#B8AFC4] hover:bg-purple-900/20 hover:text-white hover:border-purple-800/30'
       )}
     >
       <div className="flex items-center gap-2.5 min-w-0 flex-1">
-        <MessageSquare className={cn('w-4 h-4 flex-shrink-0', isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400')} />
+        <MessageSquare className={cn('w-4 h-4 flex-shrink-0', isActive ? 'text-[#A855F7]' : 'text-slate-400')} />
 
         {isEditing ? (
           <div className="flex items-center gap-1 flex-1" onClick={(e) => e.stopPropagation()}>
@@ -58,18 +64,25 @@ export function ChatHistoryItem({ chat, isActive }: ChatHistoryItemProps) {
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSaveRename()}
-              className="w-full bg-white dark:bg-slate-900 border border-indigo-500 rounded px-2 py-0.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none"
+              className="w-full bg-[#1A0B2E] border border-[#A855F7] rounded-lg px-2 py-1 text-xs text-white focus:outline-none"
               autoFocus
             />
-            <button onClick={handleSaveRename} className="p-1 text-emerald-600 hover:text-emerald-500">
+            <button onClick={handleSaveRename} className="p-1 text-emerald-400 hover:text-emerald-300">
               <Check className="w-3.5 h-3.5" />
             </button>
-            <button onClick={() => setIsEditing(false)} className="p-1 text-rose-600 hover:text-rose-500">
+            <button onClick={() => setIsEditing(false)} className="p-1 text-rose-400 hover:text-rose-300">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
         ) : (
-          <span className="truncate flex-1">{chat.title}</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="truncate text-xs font-medium">{chat.title}</span>
+            {chat.lastMessageSnippet && (
+              <span className="truncate text-[10px] text-slate-400 font-normal mt-0.5">
+                {chat.lastMessageSnippet}
+              </span>
+            )}
+          </div>
         )}
       </div>
 
@@ -77,7 +90,7 @@ export function ChatHistoryItem({ chat, isActive }: ChatHistoryItemProps) {
         <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
           <Dropdown
             trigger={
-              <button className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700/60">
+              <button className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-purple-800/40">
                 <MoreVertical className="w-3.5 h-3.5" />
               </button>
             }

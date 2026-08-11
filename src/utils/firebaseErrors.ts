@@ -38,6 +38,9 @@ export function formatFirebaseError(error: any): string {
     case 'auth/too-many-requests':
       return 'Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later.';
 
+    case 'auth/unauthorized-domain':
+      return 'This domain (marketmind.ai) is not authorized in your Firebase Console. Go to Firebase Console > Authentication > Settings > Authorized Domains and add "marketmind.ai".';
+
     default:
       if (typeof error === 'string') return error;
       return error.message || 'Authentication failed. Please check your credentials and try again.';

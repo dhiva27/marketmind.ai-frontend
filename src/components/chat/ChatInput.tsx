@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useRef, KeyboardEvent } from 'react';
-import { Plus, Mic, ChevronDown, Send } from 'lucide-react';
+import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
+import { Plus, Mic, ChevronDown, Send, Square } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 
 export function ChatInput() {
@@ -9,7 +9,15 @@ export function ChatInput() {
   const [model, setModel] = useState('Flash');
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
   const { sendMessage, isGenerating } = useChat();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea as user types
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 180)}px`;
+  }, [prompt]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -17,96 +25,112 @@ export function ChatInput() {
 
     const currentPrompt = prompt;
     setPrompt('');
-
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
     await sendMessage(currentPrompt);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto relative px-2">
-      {/* Large Pill Chat Input Box matching Section 5 & Second Reference Image */}
+    <div className="w-full max-w-2xl mx-auto relative px-2">
+      {/* Large Pill Chat Input Box matching Reference 1 */}
       <form
         onSubmit={handleSubmit}
-        className="relative rounded-[34px] border border-[#A855F7]/25 bg-[rgba(20,8,30,0.85)] backdrop-blur-md shadow-[0_0_35px_rgba(139,61,255,0.35)] px-6 py-4 flex items-center justify-between gap-4 transition-all duration-300 focus-within:border-[#A855F7]/60 focus-within:shadow-[0_0_45px_rgba(139,61,255,0.5)] min-h-[64px]"
+        className="relative rounded-full border border-slate-200 bg-white shadow-[0_4px_25px_rgba(139,61,255,0.12)] px-5 py-3.5 flex items-center justify-between gap-3 transition-all duration-300 focus-within:border-[#8B3DFF]/40 focus-within:shadow-[0_4px_30px_rgba(139,61,255,0.22)] min-h-[58px]"
       >
         {/* Plus Icon on Left */}
         <button
           type="button"
-          onClick={() => inputRef.current?.focus()}
-          className="p-1 text-[#B8AFC4] hover:text-white transition-colors shrink-0"
+          className="p-1 text-[#8B3DFF] hover:text-[#7C3AED] transition-colors shrink-0"
           title="Add attachment"
         >
-          <Plus className="w-5.5 h-5.5 stroke-[1.75]" />
+          <Plus className="w-5.5 h-5.5 stroke-[2]" />
         </button>
 
-        {/* Text Input */}
-        <input
-          ref={inputRef}
-          type="text"
+        {/* Multiline Textarea */}
+        <textarea
+          ref={textareaRef}
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask MarketMind AI"
           disabled={isGenerating}
-          className="w-full bg-transparent border-0 text-base text-white placeholder-[#81758F] focus:outline-none focus:ring-0 py-0.5"
+          rows={1}
+          className="flex-1 bg-transparent border-0 text-[15px] text-[#0A0015] placeholder-[#9489A5] focus:outline-none focus:ring-0 resize-none py-1 min-h-[26px] max-h-[160px] custom-scrollbar font-medium"
         />
 
-        {/* Right Section: Model Selector Dropdown & Microphone Icon */}
-        <div className="flex items-center gap-4 shrink-0">
+        {/* Right Section: Model Selector & Microphone / Send */}
+        <div className="flex items-center gap-3 shrink-0">
           {/* Model Selector Dropdown ("Flash v") */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-              className="flex items-center gap-1.5 text-sm font-medium text-[#B8AFC4] hover:text-white px-2.5 py-1 rounded-xl hover:bg-purple-900/30 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors"
             >
               <span>{model}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#81758F]" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {modelDropdownOpen && (
-              <div className="absolute right-0 bottom-12 w-40 bg-[#17101F] border border-[#A855F7]/30 rounded-2xl shadow-2xl p-1.5 z-50 text-xs text-slate-200 space-y-1 backdrop-blur-lg">
-                {['Flash', 'Pro 2.0', 'Ultra Strategy'].map((m) => (
+              <div className="absolute right-0 bottom-12 w-44 bg-white border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 text-xs text-slate-800 space-y-1">
+                {[
+                  { name: 'Flash', desc: 'Fast & smart' },
+                  { name: 'Pro 2.0', desc: 'Deeper strategy' },
+                  { name: 'Ultra Strategy', desc: 'Advanced analysis' },
+                ].map((m) => (
                   <button
-                    key={m}
+                    key={m.name}
                     type="button"
                     onClick={() => {
-                      setModel(m);
+                      setModel(m.name);
                       setModelDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-xl hover:bg-purple-900/40 transition-colors ${
-                      model === m ? 'font-bold text-[#A855F7] bg-purple-950/60' : ''
+                    className={`w-full text-left px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
+                      model === m.name
+                        ? 'font-bold text-[#8B3DFF] bg-purple-50'
+                        : 'hover:bg-slate-50'
                     }`}
                   >
-                    {m}
+                    <span>{m.name}</span>
+                    <span className="text-[10px] text-slate-400 font-normal">{m.desc}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Microphone / Send Button */}
-          {prompt.trim() ? (
+          {/* Microphone / Send / Stop Button */}
+          {isGenerating ? (
+            <button
+              type="button"
+              title="Stop generating"
+              className="p-2 rounded-full bg-rose-500 text-white hover:bg-rose-600 transition-all shadow-sm"
+            >
+              <Square className="w-4 h-4 fill-white" />
+            </button>
+          ) : prompt.trim() ? (
             <button
               type="submit"
-              disabled={isGenerating}
+              title="Send message"
               className="p-2 rounded-full bg-[#8B3DFF] text-white hover:bg-[#7C3AED] transition-all hover:scale-105 shadow-md"
             >
-              <Send className="w-4.5 h-4.5" />
+              <Send className="w-4 h-4" />
             </button>
           ) : (
             <button
               type="button"
-              className="p-1 text-[#B8AFC4] hover:text-white transition-colors"
+              className="p-1 text-slate-500 hover:text-slate-900 transition-colors"
               title="Voice Input"
             >
-              <Mic className="w-5.5 h-5.5 stroke-[1.5]" />
+              <Mic className="w-5.5 h-5.5 stroke-[1.75]" />
             </button>
           )}
         </div>
