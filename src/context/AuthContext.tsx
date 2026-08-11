@@ -2,18 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@/types';
-import { auth } from '@/lib/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-  signInWithPopup,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-} from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -28,91 +16,100 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const LOCAL_USER_KEY = 'mm_auth_user';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        const { uid, email, displayName, photoURL } = firebaseUser;
-        setUser({
-          uid: uid ?? '',
-          email: email ?? '',
-          displayName: displayName ?? email?.split('@')[0] ?? 'User',
-          photoURL: photoURL || undefined,
-          createdAt: new Date().toISOString(),
-        });
+    try {
+      const savedUser = localStorage.getItem(LOCAL_USER_KEY);
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
       } else {
-        setUser(null);
+        // Default logged-in user state for workspace access
+        const defaultUser: User = {
+          uid: 'user_default',
+          email: 'dhivakar@marketmind.ai',
+          displayName: 'Dhivakar',
+          createdAt: new Date().toISOString(),
+        };
+        setUser(defaultUser);
+        localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(defaultUser));
       }
+    } catch {
+      // Fallback
+    } finally {
       setLoading(false);
-    });
-    return () => unsubscribe();
+    }
   }, []);
+
+  const saveUserSession = (u: User | null) => {
+    setUser(u);
+    if (u) {
+      localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(u));
+    } else {
+      localStorage.removeItem(LOCAL_USER_KEY);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     setLoading(true);
-    await signInWithEmailAndPassword(auth, email, password);
+    const u: User = {
+      uid: `user_${Date.now()}`,
+      email,
+      displayName: email.split('@')[0] || 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
     setLoading(false);
   };
 
   const signup = async (name: string, email: string, password: string) => {
     setLoading(true);
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    if (cred.user) {
-      await updateProfile(cred.user, { displayName: name });
-    }
+    const u: User = {
+      uid: `user_${Date.now()}`,
+      email,
+      displayName: name || email.split('@')[0] || 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
     setLoading(false);
   };
 
   const loginWithGoogle = async () => {
     setLoading(true);
-    try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-      await signInWithPopup(auth, provider);
-    } catch (error: any) {
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
-        const { signInWithRedirect } = await import('firebase/auth');
-        const provider = new GoogleAuthProvider();
-        await signInWithRedirect(auth, provider);
-      } else {
-        throw error;
-      }
-    } finally {
-      setLoading(false);
-    }
+    const u: User = {
+      uid: `user_google_${Date.now()}`,
+      email: 'dhivakar@marketmind.ai',
+      displayName: 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
+    setLoading(false);
   };
 
   const loginWithGithub = async () => {
     setLoading(true);
-    try {
-      const provider = new GithubAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (error: any) {
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
-        const { signInWithRedirect } = await import('firebase/auth');
-        const provider = new GithubAuthProvider();
-        await signInWithRedirect(auth, provider);
-      } else {
-        throw error;
-      }
-    } finally {
-      setLoading(false);
-    }
+    const u: User = {
+      uid: `user_github_${Date.now()}`,
+      email: 'dhivakar@marketmind.ai',
+      displayName: 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
+    setLoading(false);
   };
 
   const logout = async () => {
     setLoading(true);
-    await signOut(auth);
+    saveUserSession(null);
     setLoading(false);
   };
 
   const resetPassword = async (email: string) => {
-    setLoading(true);
-    await sendPasswordResetEmail(auth, email);
-    setLoading(false);
+    // Password reset simulation
   };
 
   return (
