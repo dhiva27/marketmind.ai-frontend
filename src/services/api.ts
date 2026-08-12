@@ -1,7 +1,12 @@
 import { auth } from '@/lib/firebase';
 
-const RAW_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '';
-const API_BASE_URL = RAW_BACKEND_URL.trim().replace(/\/+$/, '') || 'http://localhost:5000/api';
+const RAW_BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/+$/, '');
+
+// Ensure API_BASE_URL ends with '/api'
+let API_BASE_URL = 'http://localhost:5000/api';
+if (RAW_BACKEND_URL) {
+  API_BASE_URL = RAW_BACKEND_URL.endsWith('/api') ? RAW_BACKEND_URL : `${RAW_BACKEND_URL}/api`;
+}
 
 /**
  * Get a fresh Firebase ID token for the current user.
@@ -34,7 +39,9 @@ export async function fetchApi<T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const url = `${API_BASE_URL}${endpoint}`;
+  // Guarantee clean path concatenation
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE_URL}${cleanEndpoint}`;
 
   if (process.env.NODE_ENV === 'development') {
     console.log(`[api] ${options.method || 'GET'} ${url} | auth: ${token ? 'token present' : 'no token'}`);
