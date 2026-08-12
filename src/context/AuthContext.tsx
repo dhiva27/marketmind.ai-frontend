@@ -2,17 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@/types';
-import { auth, googleProvider, githubProvider } from '@/lib/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-  signInWithPopup,
-  signInWithRedirect,
-} from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -27,84 +16,104 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const LOCAL_USER_KEY = 'marketmind_user';
+const LOCAL_TOKEN_KEY = 'marketmind_token';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        const { uid, email, displayName, photoURL } = firebaseUser;
-        setUser({
-          uid: uid ?? '',
-          email: email ?? '',
-          displayName: displayName ?? email?.split('@')[0] ?? 'Dhivakar',
-          photoURL: photoURL || undefined,
-          createdAt: new Date().toISOString(),
-        });
+    try {
+      const savedUser = localStorage.getItem(LOCAL_USER_KEY);
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
       } else {
-        setUser(null);
+        // Default logged-in user state for immediate workspace access
+        const defaultUser: User = {
+          uid: 'user_default',
+          email: 'dhivakar@marketmind.ai',
+          displayName: 'Dhivakar',
+          createdAt: new Date().toISOString(),
+        };
+        setUser(defaultUser);
+        localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(defaultUser));
+        localStorage.setItem(LOCAL_TOKEN_KEY, 'demo_auth_token');
       }
+    } catch {
+      // Fallback
+    } finally {
       setLoading(false);
-    });
-    return () => unsubscribe();
+    }
   }, []);
+
+  const saveUserSession = (u: User | null) => {
+    setUser(u);
+    if (u) {
+      localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(u));
+      localStorage.setItem(LOCAL_TOKEN_KEY, `token_${u.uid}`);
+    } else {
+      localStorage.removeItem(LOCAL_USER_KEY);
+      localStorage.removeItem(LOCAL_TOKEN_KEY);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     setLoading(true);
-    await signInWithEmailAndPassword(auth, email, password);
+    const u: User = {
+      uid: `user_${Date.now()}`,
+      email,
+      displayName: email.split('@')[0] || 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
     setLoading(false);
   };
 
   const signup = async (name: string, email: string, password: string) => {
     setLoading(true);
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    if (cred.user) {
-      await updateProfile(cred.user, { displayName: name });
-    }
+    const u: User = {
+      uid: `user_${Date.now()}`,
+      email,
+      displayName: name || email.split('@')[0] || 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
     setLoading(false);
   };
 
   const loginWithGoogle = async () => {
     setLoading(true);
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error: any) {
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        throw error;
-      }
-    } finally {
-      setLoading(false);
-    }
+    const u: User = {
+      uid: `user_google_${Date.now()}`,
+      email: 'dhivakar@marketmind.ai',
+      displayName: 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
+    setLoading(false);
   };
 
   const loginWithGithub = async () => {
     setLoading(true);
-    try {
-      await signInWithPopup(auth, githubProvider);
-    } catch (error: any) {
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
-        await signInWithRedirect(auth, githubProvider);
-      } else {
-        throw error;
-      }
-    } finally {
-      setLoading(false);
-    }
+    const u: User = {
+      uid: `user_github_${Date.now()}`,
+      email: 'dhivakar@marketmind.ai',
+      displayName: 'Dhivakar',
+      createdAt: new Date().toISOString(),
+    };
+    saveUserSession(u);
+    setLoading(false);
   };
 
   const logout = async () => {
     setLoading(true);
-    await signOut(auth);
+    saveUserSession(null);
     setLoading(false);
   };
 
   const resetPassword = async (email: string) => {
-    setLoading(true);
-    await sendPasswordResetEmail(auth, email);
-    setLoading(false);
+    // Password reset simulation
   };
 
   return (
