@@ -11,7 +11,7 @@ export default function HelpPage() {
 
   const faqs = [
     { q: 'How does MarketMind AI build marketing strategies?', a: 'MarketMind AI uses Gemini AI coupled with a 48-section strategic framework to guide you from problem diagnosis to measurable action plans.' },
-    { q: 'Is my business data private?', a: 'Yes. All chat history is isolated per authenticated user account and never shared across users.' },
+    { q: 'Is my business data private?', a: 'Yes. We use enterprise-grade encryption (SSL/TLS), secure authentication, and strict privacy controls, and never shared across users.' },
     { q: 'Can I export my marketing plans?', a: 'You can copy responses using the built-in copy button on any AI message or download Markdown content.' },
   ];
 

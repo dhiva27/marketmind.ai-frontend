@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/context/AuthContext';
 import { User as UserIcon, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { formatFirebaseError } from '@/utils/firebaseErrors';
+import { formatAuthError } from '@/utils/authErrors';
 
 export function SignupForm() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export function SignupForm() {
       await signup(name, email, password);
       router.push('/chat');
     } catch (err: any) {
-      setError(formatFirebaseError(err));
+      setError(formatAuthError(err));
     }
   };
 
@@ -51,7 +51,7 @@ export function SignupForm() {
       await loginWithGoogle();
       router.push('/chat');
     } catch (err: any) {
-      setError(formatFirebaseError(err));
+      setError(formatAuthError(err));
     }
   };
 
@@ -61,7 +61,7 @@ export function SignupForm() {
       await loginWithGithub();
       router.push('/chat');
     } catch (err: any) {
-      setError(formatFirebaseError(err));
+      setError(formatAuthError(err));
     }
   };
 
