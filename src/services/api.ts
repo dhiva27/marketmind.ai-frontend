@@ -1,10 +1,29 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+import { auth } from '@/lib/firebase';
+
+const RAW_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE_URL = RAW_BACKEND_URL.trim().replace(/\/+$/, '') || 'http://localhost:5000/api';
+
+/**
+ * Get a fresh Firebase ID token for the current user.
+ * Returns null if no user is signed in.
+ */
+async function getFirebaseToken(): Promise<string | null> {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      return await user.getIdToken(/* forceRefresh */ false);
+    }
+  } catch (err) {
+    console.warn('[api] Could not get Firebase ID token:', err);
+  }
+  return null;
+}
 
 export async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('marketmind_token') : null;
+  const token = await getFirebaseToken();
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -15,14 +34,33 @@ export async function fetchApi<T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[api] ${options.method || 'GET'} ${url} | auth: ${token ? 'token present' : 'no token'}`);
+  }
+
+  const response = await fetch(url, {
     ...options,
     headers,
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
-    throw new Error(errorData.message || `HTTP error ${response.status}`);
+    let message = `HTTP ${response.status}`;
+    try {
+      const errorData = await response.json();
+      message = errorData.message || message;
+    } catch {
+      // ignore JSON parse error
+    }
+
+    // Specific user-friendly messages per status code
+    if (response.status === 401) throw new Error('Authentication required. Please sign in again.');
+    if (response.status === 403) throw new Error("You don't have permission to access this data.");
+    if (response.status === 404) throw new Error(`Chat history endpoint is unavailable (${url}).`);
+    if (response.status >= 500) throw new Error('Unable to load chat history right now. Please try again.');
+
+    throw new Error(message);
   }
 
   return response.json();
