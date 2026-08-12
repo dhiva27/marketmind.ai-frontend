@@ -1,4 +1,5 @@
 import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 const RAW_BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/+$/, '');
 
@@ -9,12 +10,36 @@ if (RAW_BACKEND_URL) {
 }
 
 /**
+ * Helper to get the current Firebase User, waiting for Firebase auth 
+ * state initialization if auth.currentUser is initially null on page load.
+ */
+function getCurrentUser(): Promise<User | null> {
+  return new Promise((resolve) => {
+    if (auth.currentUser) {
+      return resolve(auth.currentUser);
+    }
+
+    // Set a 2.5s timeout in case user is truly unauthenticated
+    const timer = setTimeout(() => {
+      unsubscribe();
+      resolve(null);
+    }, 2500);
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      clearTimeout(timer);
+      unsubscribe();
+      resolve(user);
+    });
+  });
+}
+
+/**
  * Get a fresh Firebase ID token for the current user.
- * Returns null if no user is signed in.
+ * Waits for Firebase session initialization on page load.
  */
 async function getFirebaseToken(): Promise<string | null> {
   try {
-    const user = auth.currentUser;
+    const user = await getCurrentUser();
     if (user) {
       return await user.getIdToken(/* forceRefresh */ false);
     }

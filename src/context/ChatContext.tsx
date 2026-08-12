@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Chat, Message, Attachment } from '@/types';
 import { chatService } from '@/services/chatService';
+import { useAuthContext } from '@/context/AuthContext';
 
 interface ChatContextType {
   chats: Chat[];
@@ -85,9 +86,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const { user: authUser } = useAuthContext();
+
   useEffect(() => {
     refreshHistory();
-  }, []);
+  }, [authUser]);
 
   // Fetch messages for active chat when switched
   useEffect(() => {
