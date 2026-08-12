@@ -4,8 +4,11 @@ import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Helper: safely clean an env var value of hidden newlines / whitespace
-const cleanEnv = (val: string | undefined, fallback: string): string =>
-  (val ?? fallback).trim().replace(/[\r\n]/g, "");
+// Use || (not ??) so empty string "" falls back to valid hardcoded credential
+const cleanEnv = (val: string | undefined, fallback: string): string => {
+  const str = (val && val.trim()) ? val.trim().replace(/[\r\n]/g, "") : "";
+  return str || fallback;
+};
 
 // Official Firebase configuration for MarketMind AI (Project: marketmindai-73278)
 const firebaseConfig = {
@@ -26,7 +29,7 @@ if (typeof window !== "undefined") {
       console.error(`[Firebase] Missing required config: ${key}. Check NEXT_PUBLIC_FIREBASE_${key.toUpperCase()}.`);
     }
   }
-  console.log("[Firebase] authDomain:", firebaseConfig.authDomain);
+  console.log("[Firebase] Project ID:", firebaseConfig.projectId);
 }
 
 // Initialize Firebase (SSR singleton-safe)
