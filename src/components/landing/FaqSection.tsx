@@ -22,7 +22,7 @@ export function FaqSection() {
     },
     {
       q: 'Is my data safe?',
-      a: 'Yes. We use enterprise-grade encryption (SSL/TLS), Firebase authentication, and strict data privacy protocols.',
+      a: 'Yes. We use enterprise-grade encryption (SSL/TLS), secure authentication, and strict data privacy protocols.',
     },
     {
       q: 'Can I use MarketMind AI for my clients?',
